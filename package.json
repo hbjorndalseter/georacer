@@ -1,4 +1,11 @@
 {
+  "name": "georacer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "vite --config client/vite.config.ts",
+  },
   "dependencies": {
     "georacer": "file:",
     "react": "^19.0.0",
