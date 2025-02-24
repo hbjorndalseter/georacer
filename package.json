@@ -13,8 +13,10 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.0.8",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "georacer": "file:",
+    "pg": "^8.13.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
