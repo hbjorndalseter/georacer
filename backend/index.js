@@ -1,30 +1,30 @@
 import dotenv from 'dotenv';
-dotenv.config({path : './backend/.env'});
-
+import pool from './db.js';
 import express from 'express';
 import cors from 'cors';
-import pkg from 'pg';
+import playerRouter from './routes/players.js';
 
-const { Client } = pkg;
+dotenv.config({path : './backend/.env'});
 
 const app = express();
-const port = 3000;
-app.use(cors());
+const port = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.json()); 
 
-// Vet ikke hva de to neste linjene gjør
-
-const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-});
-
-client.connect()
-    .then(() => console.log('Connected to database'))
-    .catch(err => console.error('Error connecting to database', err.stack));
+app.use('/api/players', playerRouter);
 
 app.get('/', (req, res) => {
     res.send({msg: 'Backend fungerer!'});
+});
+
+// Test databaseforbindelse ved oppstart
+pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+        console.error('Database connection error', err);
+    } else {
+        console.log('Connected to database:', res.rows[0].now);
+    }
 });
 
 app.listen(port, () => {
