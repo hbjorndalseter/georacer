@@ -1,7 +1,14 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
+export default defineConfig(async () => {
+  const tailwindcss = (await import('@tailwindcss/vite')).default
+  return {
+    root: 'frontend',
+    plugins: [
+      tailwindcss(),
+    ],
+    optimizeDeps: {
+      exclude: ['@tailwindcss/vite']
+    }
+  }
 })
