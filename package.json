@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "commonjs",
   "scripts": {
-    "dev": "vite --config frontend/vite.config.ts"
+    "dev": "vite frontend/vite.config.ts",
+    "build": "vite build",
+    "serve": "vite preview"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.8",
