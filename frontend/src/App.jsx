@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react"
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import StartPage from './pages/StartPage';
+import PlayPage from './pages/PlayPage';
 
 export default function App() {
-
-  const [msg, setMsg] = useState('')
-
-  useEffect(() => {
-    fetch('http://localhost:3000')
-      .then(response => response.json())
-      .then(data => setMsg(data.msg))
-  }, [])
-
   return (
-    <h1 className="text-amber-300">GeoRacer: {msg}</h1>
+    <BrowserRouter>
+      <div className="app">
+        <Routes>
+          <Route path="/" element={<StartPage />} />
+          <Route path="/Play" element={<PlayPage />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   )
 }
