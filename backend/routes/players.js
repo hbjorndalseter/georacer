@@ -16,15 +16,41 @@ router.get('/', async (req, res) => {
 
 // Legge til en ny spiller
 router.post('/', async (req, res) => {
+    const { name } = req.body;
+
+    console.log("Mottatt data fra frontend:", req.body); // 👀 Debugging
+
+    if (!name) {
+        return res.status(400).json({ error: 'Navn må oppgis' });
+    }
     try {
-        const { name, speed } = req.body;
         const newPlayer = await prisma.players.create({
-            data: { name, speed }
+            data: { name }
         });
-        res.status(201).json(newPlayer);
+        res.json(newPlayer);
     } catch (error) {
         console.error("Feil ved opprettelse av spiller:", error);
-        res.status(500).json({ error: 'Noe gikk galt' });
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        await prisma.players.delete({
+            where: { id: parseInt(id) }
+        });
+
+        // 🔄 Tilbakestill ID-sekvensen
+        await prisma.$executeRawUnsafe(`
+            SELECT setval('players_id_seq', COALESCE((SELECT MAX(id) FROM "Players"), 1), false);
+        `);
+
+        res.json({ message: "Spiller slettet" });
+    } catch (error) {
+        console.error("Feil ved sletting av spiller:", error);
+        res.status(500).json({ error: "Noe gikk galt" });
     }
 });
 
