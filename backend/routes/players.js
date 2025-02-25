@@ -3,7 +3,7 @@ import prisma from '../db.js';
 
 const router = express.Router();
 
-// 🔹 Hente alle spillere
+// Hente alle spillere
 router.get('/', async (req, res) => {
     try {
         const players = await prisma.players.findMany();
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// 🔹 Legge til en ny spiller
+// Legge til en ny spiller
 router.post('/', async (req, res) => {
     try {
         const { name, speed } = req.body;
