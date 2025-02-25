@@ -19,6 +19,7 @@ export default function StartPage() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        // Sjekk om inputfeltet er tomt når spillet startes
         if(!newPlayer.trim()) {
             alert("Navn må oppgis før du kan starte spillet.");
             return;
@@ -40,9 +41,9 @@ export default function StartPage() {
             if (!response.ok) throw new Error("Feil ved lagring");
     
             setNewPlayer(""); // Tøm inputfeltet
-            navigate('/Play'); // Naviger til spillet
+            navigate('/Play'); // Naviger til spillsiden
     
-            // 🔄 Hent listen på nytt fra backend!
+            // Hent listen på nytt fra backend!
             const updatedPlayers = await fetch('http://localhost:3000/api/players').then(res => res.json());
             setPlayers(updatedPlayers);
     
@@ -57,16 +58,19 @@ export default function StartPage() {
             <p className="text-white text-6xl font-bold mt-[2%]">
                 VELKOMMEN TIL GEORACER
             </p>
+            <div>
+
+            </div>
             <div className="flex flex-col items-center justify-baseline">
                 <form className="flex flex-col items-center mb-[0%]">
-                    <input className="mb-[10%] text-2xl"
+                    <input className="mb-[10%] text-2xl text-black font-bold bg-[#eaeaea] rounded-[30px] text-center w-[300px] h-[50px]" 
                         type="text"
                         value={newPlayer}
                         onChange={(e) => setNewPlayer(e.target.value)}
                         placeholder="Skriv inn brukernavn"
                         required
                     />
-                    <StartButton onClick={handleSubmit} className="mb-[5%]" title="START SPILLET"></StartButton>
+                    <StartButton onClick={handleSubmit} title="START SPILLET" className="bg-[#eaeaea] rounded-[30px] text-center text-[#535353] text-[45px] font-normal font-['Koulen']"></StartButton>
                 </form>
             </div>
         </div>
