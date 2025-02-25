@@ -1,0 +1,14 @@
+generator client {
+    provider = "prisma-client-js"
+    output   = "../../node_modules/.prisma/client" // Viktig for monorepo!
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Players {
+    id   Int     @id @default(autoincrement())
+    name String?
+}
