@@ -12,3 +12,24 @@ model Players {
     id   Int     @id @default(autoincrement())
     name String?
 }
+
+model CityMap {
+    id          Int    @id @default(autoincrement())
+    name        String
+    tileUrl     String
+    nodes       Node[] @relation("CityMapNodes")
+    startNode   Node   @relation(fields: [startNodeId, references: [id]])
+    startNodeId Int    @unique
+}
+
+model Node {
+    id             Int     // Remove @unique, as it's part of a composite key
+    cityMap        CityMap @relation(fields: [cityMapId], references: [id])
+    cityMapId      Int
+    lat            Float
+    lng            Float
+    isIntersection Boolean
+
+    @@id([cityMapId, id]) // Composite primary key: (cityMapId, id) ensures uniqueness within a CityMap
+}
+
