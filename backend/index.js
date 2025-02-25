@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
-import pool from './db.js';
 import express from 'express';
 import cors from 'cors';
+import prisma from './db.js';
 import playerRouter from './routes/players.js';
 
-dotenv.config({path : './backend/.env'});
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,13 +19,15 @@ app.get('/', (req, res) => {
 });
 
 // Test databaseforbindelse ved oppstart
-pool.query('SELECT NOW()', (err, res) => {
-    if (err) {
-        console.error('Database connection error', err);
-    } else {
-        console.log('Connected to database:', res.rows[0].now);
+async function testDbConnection() {
+    try {
+        const result = await prisma.$queryRaw`SELECT NOW();`;
+        console.log('Connected to database:', result[0]);
+    } catch (error) {
+        console.error('Database connection error:', error);
     }
-});
+}
+testDbConnection();
 
 app.listen(port, () => {
     console.log(`Server kjører på http://localhost:${port}`);

@@ -1,20 +1,11 @@
-import pkg from 'pg';
-import dotenv from 'dotenv';
+import { PrismaClient } from '@prisma/client';
 
-dotenv.config({ path: './backend/.env' });
+const prisma = new PrismaClient({
+    log: ['query', 'info', 'warn', 'error'], // Logg spørringer for debugging
+  });
+  
+  process.on('beforeExit', async () => {
+    await prisma.$disconnect(); // Lukk Prisma riktig når backend stopper
+  });
 
-const { Pool } = pkg;
-
-const connectionString = process.env.DATABASE_URL;
-
-if (!connectionString) {
-    console.error('DATABASE_URL er ikke satt. Sjekk .env-filen.');
-    process.exit(1);
-}
-
-const pool = new Pool({
-    connectionString: connectionString,
-    password: process.env.DB_PASSWORD || 'admin' // 🔹 Setter passord eksplisitt
-});
-
-export default pool;
+export default prisma;
