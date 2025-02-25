@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     const { name } = req.body;
 
-    console.log("Mottatt data fra frontend:", req.body); // 👀 Debugging
+    console.log("Mottatt data fra frontend:", req.body); // For debugging
 
     if (!name) {
         return res.status(400).json({ error: 'Navn må oppgis' });
@@ -42,7 +42,7 @@ router.delete('/:id', async (req, res) => {
             where: { id: parseInt(id) }
         });
 
-        // 🔄 Tilbakestill ID-sekvensen
+        // Tilbakestill ID-sekvensen
         await prisma.$executeRawUnsafe(`
             SELECT setval('players_id_seq', COALESCE((SELECT MAX(id) FROM "Players"), 1), false);
         `);
