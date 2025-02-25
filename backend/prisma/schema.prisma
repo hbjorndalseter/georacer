@@ -13,23 +13,36 @@ model Players {
     name String?
 }
 
+// Start node is the node where the player starts and is 
 model CityMap {
     id          Int    @id @default(autoincrement())
     name        String
-    tileUrl     String
-    nodes       Node[] @relation("CityMapNodes")
-    startNode   Node   @relation(fields: [startNodeId, references: [id]])
-    startNodeId Int    @unique
+    tileUrl     String // URL to the tile image
+    startNodeId Int // The id of the start node
+    nodes       Node[]
 }
 
 model Node {
-    id             Int     // Remove @unique, as it's part of a composite key
-    cityMap        CityMap @relation(fields: [cityMapId], references: [id])
-    cityMapId      Int
-    lat            Float
-    lng            Float
-    isIntersection Boolean
+    id        Int  
+    cityMapId Int  
+    lat       Float
+    lng       Float
 
-    @@id([cityMapId, id]) // Composite primary key: (cityMapId, id) ensures uniqueness within a CityMap
+    @@id([cityMapId, id])  // Composite primary key
+
+    cityMap CityMap @relation(fields: [cityMapId], references: [id])
+    connections1 Edge[] @relation("foo") // When a node has the smaller ID
+    connections2 Edge[] @relation("bar") // When a node has the larger ID
+}
+
+model Edge {
+    cityMapId Int
+    node1Id   Int  // Always store the smaller node ID here
+    node2Id   Int  // Always store the larger node ID here
+
+    node1 Node @relation("foo", fields: [cityMapId, node1Id], references: [cityMapId, id]) 
+    node2 Node @relation("bar", fields: [cityMapId, node2Id], references: [cityMapId, id])
+
+    @@id([cityMapId, node1Id, node2Id])  // Ensures each connection is unique
 }
 
