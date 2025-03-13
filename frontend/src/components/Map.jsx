@@ -17,7 +17,6 @@ export default function Map({ mapId }) {
     const [position, setPosition] = useState([63.4305, 10.3951]);
     const [currentNode, setCurrentNode] = useState(1); // Start node is always 1
     const [neighbours, setNeighbours] = useState([]);
-    const [arrows, setArrows] = useState([]);
 
     // Center the car in the startnode when the map first loads
     useEffect(() => {
@@ -45,15 +44,6 @@ export default function Map({ mapId }) {
                 setNeighbours(data);
             });
     }, [currentNode]);
-
-
-    // When the neighbours are fetched, calculate the angle between the current node and the neighbour and show an arrow
-    useEffect(() => {
-        neighbours.forEach(neighbour => {
-            const angle = calculatePositionOfArrow(neighbour.lat, neighbour.lng, position[0], position[1]);
-            setArrows(arrows => [...arrows, { angle }]);
-        });
-    }, [neighbours]);
 
     // Handle arrow click to move to the neighbour node
     function handleArrowClick(neighbour) {
