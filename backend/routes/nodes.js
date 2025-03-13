@@ -3,6 +3,7 @@ import prisma from '../db.js';
 
 const router = express.Router();
 
+
 router.get('/:cityMapId', async (req, res) => {
     try {
         const nodes = await prisma.node.findMany({
@@ -14,7 +15,7 @@ router.get('/:cityMapId', async (req, res) => {
         res.json(nodes);
     } catch (error) {
         console.error("Feil ved henting av noder:", error);
-        res.status(500).json({ error: 'Noe jævlig gikk galt' });
+        res.status(500).json({ error: 'Noe forferdelig gikk galt' });
     }
 }
 );

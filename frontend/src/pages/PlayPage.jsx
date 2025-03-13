@@ -1,18 +1,13 @@
 import { useEffect } from 'react';
+import Map from '../components/Map';
 
 export default function PlayPage() {
 
-    useEffect(() => {
-        fetch('http://localhost:3000/api/node/1')
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error("Error:", error));
-    }
-    , []);
+    const mapId = 1; // Bruker map 1 i denne omgang
 
     return (
-        <div>
-            **FYLL INN**
+        <div className="w-screen h-screen bg-[#1b325e] justify-center items-center flex flex-col">
+            <Map mapId={mapId} />
         </div>
     )
 }
