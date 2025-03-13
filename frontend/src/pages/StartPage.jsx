@@ -18,38 +18,39 @@ export default function StartPage() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        navigate('/Play'); // Naviger til spillsiden
 
-        // Sjekk om inputfeltet er tomt når spillet startes
-        if(!newPlayer.trim()) {
-            alert("Navn må oppgis før du kan starte spillet.");
-            return;
-        }
+        // // Sjekk om inputfeltet er tomt når spillet startes
+        // if(!newPlayer.trim()) {
+        //     alert("Navn må oppgis før du kan starte spillet.");
+        //     return;
+        // }
 
-        // Sjekk om navnet allerede finnes
-        if (players.some(player => player.name === newPlayer)) {
-            alert("Dette navnet er allerede tatt. Vennligst velg et annet navn.");
-            return;
-        }
+        // // Sjekk om navnet allerede finnes
+        // if (players.some(player => player.name === newPlayer)) {
+        //     alert("Dette navnet er allerede tatt. Vennligst velg et annet navn.");
+        //     return;
+        // }
 
-        try {
-            const response = await fetch('http://localhost:3000/api/players', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: newPlayer })
-            });
+        // try {
+        //     const response = await fetch('http://localhost:3000/api/players', {
+        //         method: 'POST',
+        //         headers: { 'Content-Type': 'application/json' },
+        //         body: JSON.stringify({ name: newPlayer })
+        //     });
     
-            if (!response.ok) throw new Error("Feil ved lagring");
+        //     if (!response.ok) throw new Error("Feil ved lagring");
     
-            setNewPlayer(""); // Tøm inputfeltet
-            navigate('/Play'); // Naviger til spillsiden
+        //     setNewPlayer(""); // Tøm inputfeltet
+        //     navigate('/Play'); // Naviger til spillsiden
     
-            // Hent listen på nytt fra backend!
-            const updatedPlayers = await fetch('http://localhost:3000/api/players').then(res => res.json());
-            setPlayers(updatedPlayers);
+        //     // Hent listen på nytt fra backend!
+        //     const updatedPlayers = await fetch('http://localhost:3000/api/players').then(res => res.json());
+        //     setPlayers(updatedPlayers);
     
-        } catch (error) {
-            console.error("Error:", error);
-        }
+        // } catch (error) {
+        //     console.error("Error:", error);
+        // }
     };
 
     return (
