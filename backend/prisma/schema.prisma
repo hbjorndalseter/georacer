@@ -18,13 +18,15 @@ model spatial_ref_sys {
 }
 
 model player {
-    id        Int      @id @default(autoincrement())
-    name      String
-    email     String
-    password  String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    games     game[]
+    id                 Int      @id @default(autoincrement())
+    name               String
+    email              String
+    password           String
+    createdAt          DateTime @default(now())
+    updatedAt          DateTime @updatedAt
+    games              game[]
+    completed_question Int[]
+    score              Int
 }
 
 model game {
@@ -33,4 +35,38 @@ model game {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     players   player[]
+}
+
+model spacial_question {
+    id         Int        @id @default(autoincrement())
+    question   String
+    answer     String
+    location   Coordinate @relation(fields: [locationId], references: [id])
+    locationId Int
+}
+
+model fact_question {
+    id         Int        @id @default(autoincrement())
+    question   String
+    answer     String
+    location   Coordinate @relation(fields: [locationId], references: [id])
+    locationId Int
+}
+
+model riddle_question {
+    id         Int        @id @default(autoincrement())
+    question   String
+    answer     String
+    location   Coordinate @relation(fields: [locationId], references: [id])
+    locationId Int
+}
+
+model Coordinate {
+    id        Int   @id @default(autoincrement())
+    latitude  Float
+    longitude Float
+
+    spacial_question spacial_question[]
+    fact_question    fact_question[]
+    riddle_question  riddle_question[]
 }
