@@ -3,7 +3,6 @@ import express from 'express';
 import cors from 'cors';
 import prisma from './db.js';
 import playerRouter from './routes/players.js';
-import roadnetRouter from './routes/roadnet.js';
 
 dotenv.config();
 
@@ -14,7 +13,6 @@ app.use(cors());
 app.use(express.json()); 
 
 app.use('/api/players', playerRouter);
-app.use('/api/roadnet', roadnetRouter);
 
 app.get('/', (req, res) => {
     res.send({msg: 'Backend fungerer!'});

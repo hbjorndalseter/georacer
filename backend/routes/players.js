@@ -6,7 +6,7 @@ const router = express.Router();
 // Hente alle spillere
 router.get('/', async (req, res) => {
     try {
-        const players = await prisma.players.findMany();
+        const players = await prisma.player.findMany();
         res.json(players);
     } catch (error) {
         console.error("Feil ved henting av spillere:", error);
