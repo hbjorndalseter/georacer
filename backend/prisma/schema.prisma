@@ -9,40 +9,13 @@ datasource db {
 }
 
 model Players {
-    id   Int     @id @default(autoincrement())
-    name String?
+    id        Int     @id @default(autoincrement())
+    name      String?
     highscore Int?
 }
 
 // Start node is the node where the player starts and is 
 model CityMap {
-    id          Int    @id @default(autoincrement())
-    name        String
-    nodes       Node[]
+    id   Int    @id @default(autoincrement())
+    name String
 }
-
-model Node {
-    id        Int  
-    cityMapId Int  
-    lat       Float
-    lng       Float
-    isIntersection Boolean @default(false)
-
-    @@id([cityMapId, id])  // Composite primary key
-
-    cityMap CityMap @relation(fields: [cityMapId], references: [id])
-    connections1 Edge[] @relation("foo") // When a node has the smaller ID
-    connections2 Edge[] @relation("bar") // When a node has the larger ID
-}
-
-model Edge {
-    cityMapId Int
-    node1Id   Int  // Always store the smaller node ID here
-    node2Id   Int  // Always store the larger node ID here
-
-    node1 Node @relation("foo", fields: [cityMapId, node1Id], references: [cityMapId, id]) 
-    node2 Node @relation("bar", fields: [cityMapId, node2Id], references: [cityMapId, id])
-
-    @@id([cityMapId, node1Id, node2Id])  // Ensures each connection is unique
-}
-
