@@ -11,14 +11,13 @@ datasource db {
 model Players {
     id   Int     @id @default(autoincrement())
     name String?
+    highscore Int?
 }
 
 // Start node is the node where the player starts and is 
 model CityMap {
     id          Int    @id @default(autoincrement())
     name        String
-    tileUrl     String // URL to the tile image
-    startNodeId Int // The id of the start node
     nodes       Node[]
 }
 
@@ -27,6 +26,7 @@ model Node {
     cityMapId Int  
     lat       Float
     lng       Float
+    isIntersection Boolean @default(false)
 
     @@id([cityMapId, id])  // Composite primary key
 
