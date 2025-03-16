@@ -1,13 +1,13 @@
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import FactQuestion from "../components/FactQuestion";
+import FactQuestion from "./FactQuestion";
 
-const MapComponent = ({ handleCorrectAnswer }) => {
+const MapComponent = ({ handleCorrectAnswer, factQuestions }) => {
   return (
-    <MapContainer 
-      center={[63.4305, 10.3951]} 
-      zoom={20} 
-      style={{ height: "100vh", width: "100vw" }} // Full screen
+    <MapContainer
+      center={[63.4305, 10.3951]}
+      zoom={15}
+      style={{ height: "100vh", width: "100vw" }}
       zoomControl={false}
     >
       <TileLayer
@@ -16,13 +16,17 @@ const MapComponent = ({ handleCorrectAnswer }) => {
                      Data &copy; <a href="http://www.openstreetmap.org/copyright">
                      OpenStreetMap</a>'
       />
-      
-      <FactQuestion
-        coords={[63.429, 10.393]} // Coordinates for the sculpture
-        question="Who created this sculpture?"
-        correctAnswer="Gustav Vigeland" // Expected answer (case-insensitive)
-        onCorrectAnswer={handleCorrectAnswer}
-      />
+
+      {/* Iterate over merged questions (which have lat & lng) */}
+      {factQuestions.map((q) => (
+        <FactQuestion
+          key={q.id}
+          coords={[q.lat, q.lng]}
+          question={q.question}
+          correctAnswer={q.correctAnswer}
+          onCorrectAnswer={handleCorrectAnswer}
+        />
+      ))}
     </MapContainer>
   );
 };

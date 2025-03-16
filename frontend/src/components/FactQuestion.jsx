@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
-import factIconURL from "../assets/pin.png";
+import factIconURL from "../assets/compass2.png";
 
 const factIcon = L.icon({
   iconUrl: factIconURL,
