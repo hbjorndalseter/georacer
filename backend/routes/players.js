@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ error: 'Navn må oppgis' });
     }
     try {
-        const newPlayer = await prisma.players.create({
+        const newPlayer = await prisma.player.create({
             data: { name }
         });
         res.json(newPlayer);

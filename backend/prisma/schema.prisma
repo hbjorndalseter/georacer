@@ -19,9 +19,7 @@ model spatial_ref_sys {
 
 model Player {
     id                        Int               @id @default(autoincrement())
-    name                      String
-    createdAt                 DateTime          @default(now())
-    updatedAt                 DateTime          @updatedAt
+    name                      String            @unique
     games                     Game[]
     score                     Int
     completedSpacialQuestions SpacialQuestion[] @relation("completedSpacialQuestions")
@@ -30,11 +28,9 @@ model Player {
 }
 
 model Game {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    players   Player[]
+    id      Int      @id @default(autoincrement())
+    name    String
+    players Player[]
 }
 
 model SpacialQuestion {
