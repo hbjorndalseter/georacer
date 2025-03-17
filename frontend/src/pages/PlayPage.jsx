@@ -13,7 +13,7 @@ const PlayPage = () => {
 
   // Fetch fact_questions
   useEffect(() => {
-    fetch("http://localhost:3000/api/fact_questions")
+    fetch("http://localhost:3000/api/fact-questions")
       .then((res) => res.json())
       .then((data) => {
         console.log("factQuestions fetched:", data);
@@ -26,7 +26,7 @@ const PlayPage = () => {
 
   // Fetch question_coordinates
   useEffect(() => {
-    fetch("http://localhost:3000/api/question_coordinates")
+    fetch("http://localhost:3000/api/questions-coordinates")
       .then((res) => res.json())
       .then((data) => {
         console.log("questionCoordinates fetched:", data);
