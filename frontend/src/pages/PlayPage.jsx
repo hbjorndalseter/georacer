@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GameMap from "../components/GameMap";
+import { usePlayer } from "../context/PlayerContext";
 
 const PlayPage = () => {
-  const [score, setScore] = useState(0);
+  const { player, updatePlayerScore } = usePlayer();
+  const [score, setScore] = useState(player?.score || 0);
 
-  const handleCorrectAnswer = () => {
-    setScore((prevScore) => prevScore + 1);
+  useEffect(() => {
+    if (player) {
+      setScore(player.score);
+    }
+  }, [player]);
+
+  const handleCorrectAnswer = async () => {
+    const newScore = score + 1;
+    setScore(newScore);
+    await updatePlayerScore(newScore); // Oppdater backend
   };
 
   return (

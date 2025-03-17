@@ -1,30 +1,38 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from "react";
 
-const PlayerContext = createContext();
+const PlayerContext = createContext(null);
 
 export const usePlayer = () => useContext(PlayerContext);
+
+const API_URL = import.meta.env.VITE_API_URL;
+if (!API_URL) {
+  console.error("🚨 Feil: VITE_API_URL er ikke definert! Sjekk .env-filen din.");
+}
 
 export const PlayerProvider = ({ children }) => {
   const [player, setPlayer] = useState(null);
 
   const loginPlayer = async (username) => {
-    const res = await fetch('http://localhost:3000/api/players/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: username }),
-    });
+    try {
+      const res = await fetch(`${API_URL}/api/players/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: username }),
+      });
 
-    const data = await res.json();
-    setPlayer(data);
-  };
+      if (!res.ok) {
+        throw new Error("Feil ved login");
+      }
 
-  const value = {
-    player,
-    loginPlayer,
+      const data = await res.json();
+      setPlayer(data.player);
+    } catch (error) {
+      console.error("Feil ved login:", error);
+    }
   };
 
   return (
-    <PlayerContext.Provider value={value}>
+    <PlayerContext.Provider value={{ player, loginPlayer }}>
       {children}
     </PlayerContext.Provider>
   );

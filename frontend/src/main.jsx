@@ -5,7 +5,7 @@ import App from './App.jsx'
 import { PlayerProvider } from './context/PlayerContext.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <PlayerProvider>
+  <StrictMode>
     <App />
-  </PlayerProvider>
+  </StrictMode>
 );

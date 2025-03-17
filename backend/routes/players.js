@@ -3,6 +3,35 @@ import prisma from '../db.js';
 
 const router = express.Router();
 
+const getOrCreatePlayer = async (name) => {
+    // Prøv å finn spilleren med gitt navn
+    let player = await prisma.player.findUnique({
+        where: { name },
+        include: {
+            completedFactQuestions: true,
+            completedRiddleQuestions: true,
+            completedSpacialQuestions: true,
+        }
+    });
+    
+    let isNewPlayer = false;
+
+    if(!player) {
+        // Opprett ny spiller
+        player = await prisma.player.create({
+            data: { name, score: 0 },
+            include: {
+                completedFactQuestions: true,
+                completedRiddleQuestions: true,
+                completedSpacialQuestions: true,
+            }
+        });
+        isNewPlayer = true;
+    }
+   
+    return { player, isNewPlayer };
+};
+
 // Hente alle spillere
 router.get('/', async (req, res) => {
     try {
@@ -31,27 +60,6 @@ router.get('/:name', async (req, res) => {
     } catch (error) {
         console.error("Feil ved henting av spiller:", error);
         res.status(500).json({ error: 'Noe gikk galt' });
-    }
-});
-
-
-// Legge til en ny spiller
-router.post('/', async (req, res) => {
-    const { name } = req.body;
-
-    console.log("Mottatt data fra frontend:", req.body); // For debugging
-
-    if (!name) {
-        return res.status(400).json({ error: 'Navn må oppgis' });
-    }
-    try {
-        const newPlayer = await prisma.player.create({
-            data: { name }
-        });
-        res.json(newPlayer);
-    } catch (error) {
-        console.error("Feil ved opprettelse av spiller:", error);
-        res.status(500).json({ error: error.message });
     }
 });
 
@@ -97,7 +105,7 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        await prisma.players.delete({
+        await prisma.player.delete({
             where: { id: parseInt(id) }
         });
 
@@ -117,34 +125,16 @@ router.delete('/:id', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { name } = req.body;
 
-    console.log("Mottatt data fra frontend:", req.body); // For debugging
-
     if (!name) {
         return res.status(400).json({ error: 'Navn må oppgis' });
     }
     try {
-        const player = await prisma.player.findUnique({
-            where: { name },
-            include: {
-                completedFactQuestions: true,
-                completedRiddleQuestions: true,
-                completedSpacialQuestions: true,
-            }
-        });
-
-        if (!player) {
-            const newPlayer = await prisma.player.create({
-                data: { name }
-            });
-            res.json(newPlayer);
-        } else {
-            res.json(player);
-        }
+        const {player, isNewPlayer} = await getOrCreatePlayer(name);
+        res.json({player, isNewPlayer});
     } catch (error) {
         console.error("Feil ved opprettelse av spiller:", error);
         res.status(500).json({ error: error.message });
     }
 });
-
 
 export default router;
