@@ -8,7 +8,7 @@ const GameMap = ({ handleCorrectAnswer }) => {
 
   // Hent fact_questions
   useEffect(() => {
-    fetch("http://localhost:3000/api/fact_questions")
+    fetch("http://localhost:3000/api/fact-questions")
       .then((res) => res.json())
       .then((data) => {
         console.log("factQuestions fetched:", data);
@@ -21,7 +21,7 @@ const GameMap = ({ handleCorrectAnswer }) => {
 
   // Hent question_coordinates
   useEffect(() => {
-    fetch("http://localhost:3000/api/question_coordinates")
+    fetch("http://localhost:3000/api/questions-coordinates")
       .then((res) => res.json())
       .then((data) => {
         console.log("questionCoordinates fetched:", data);
@@ -36,17 +36,17 @@ const GameMap = ({ handleCorrectAnswer }) => {
   useEffect(() => {
     if (factQuestions.length > 0 && questionCoordinates.length > 0) {
       const merged = factQuestions.map((fq) => {
-        // Sammenlign fq.locationid med qc.id (begge er tall)
-        const coord = questionCoordinates.find(
-          (qc) => qc.id === fq.locationid
-        );
+        // Find matching coordinate by comparing fq.locationid to coord.id
+        const coord = questionCoordinates.find((qc) => qc.id === fq.locationId);
+
+        // Return a new object with lat/lng from the coordinate
         return {
           ...fq,
-          // Bruk coord.latitude og coord.longitude – sett til 0 om ingen match
-          lat: coord ? parseFloat(coord.latitude) : 0,
-          lng: coord ? parseFloat(coord.longitude) : 0,
+          lat : (coord ? parseFloat(coord.latitude) : 0),
+          lng : (coord ? parseFloat(coord.longitude) : 0),
         };
       });
+
       console.log("Merged questions:", merged);
       setMergedQuestions(merged);
     }

@@ -3,10 +3,10 @@ import express from 'express';
 import cors from 'cors';
 import prisma from './db.js';
 import playerRouter from './routes/players.js';
-import questionCoordinatesRouter from './routes/questionCoordinates.js';
-import spacialQuestionRouter from './routes/spacial_question.js';
-import factQuestionRouter from './routes/fact_question.js';
-import riddleQuestionRouter from './routes/riddle_question.js';
+import questionCoordinatesRouter from './routes/questions-coordinates.js';
+import spacialQuestionRouter from './routes/spacial-questions.js';
+import factQuestionRouter from './routes/fact-questions.js';
+import riddleQuestionRouter from './routes/riddle-questions.js';
 
 dotenv.config();
 
