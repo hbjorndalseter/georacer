@@ -1,4 +1,7 @@
 import dotenv from 'dotenv';
+dotenv.config();
+console.log("🚀 DATABASE_URL:", process.env.DATABASE_URL);
+
 import express from 'express';
 import cors from 'cors';
 import prisma from './db.js';
@@ -7,8 +10,6 @@ import questionCoordinatesRouter from './routes/questions-coordinates.js';
 import spacialQuestionRouter from './routes/spacial-questions.js';
 import factQuestionRouter from './routes/fact-questions.js';
 import riddleQuestionRouter from './routes/riddle-questions.js';
-
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
