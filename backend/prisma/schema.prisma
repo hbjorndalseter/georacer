@@ -18,15 +18,15 @@ model spatial_ref_sys {
 }
 
 model Player {
-    id                 Int      @id @default(autoincrement())
-    name               String
-    email              String
-    password           String
-    createdAt          DateTime @default(now())
-    updatedAt          DateTime @updatedAt
-    games              Game[]
-    completed_question Int[]
-    score              Int
+    id                        Int               @id @default(autoincrement())
+    name                      String
+    createdAt                 DateTime          @default(now())
+    updatedAt                 DateTime          @updatedAt
+    games                     Game[]
+    score                     Int
+    completedSpacialQuestions SpacialQuestion[] @relation("completedSpacialQuestions")
+    completedFactQuestions    FactQuestion[]    @relation("completedFactQuestions")
+    completedRiddleQuestions  RiddleQuestion[]  @relation("completedRiddleQuestions")
 }
 
 model Game {
@@ -38,27 +38,30 @@ model Game {
 }
 
 model SpacialQuestion {
-    id         Int        @id @default(autoincrement())
-    question   String
-    answer     String
-    location   Coordinate @relation(fields: [locationId], references: [id])
-    locationId Int
+    id          Int        @id @default(autoincrement())
+    question    String
+    answer      String
+    location    Coordinate @relation(fields: [locationId], references: [id])
+    locationId  Int
+    completedBy Player[]   @relation("completedSpacialQuestions")
 }
 
 model FactQuestion {
-    id         Int        @id @default(autoincrement())
-    question   String
-    answer     String
-    location   Coordinate @relation(fields: [locationId], references: [id])
-    locationId Int
+    id          Int        @id @default(autoincrement())
+    question    String
+    answer      String
+    location    Coordinate @relation(fields: [locationId], references: [id])
+    locationId  Int
+    completedBy Player[]   @relation("completedFactQuestions")
 }
 
 model RiddleQuestion {
-    id         Int        @id @default(autoincrement())
-    question   String
-    answer     String
-    location   Coordinate @relation(fields: [locationId], references: [id])
-    locationId Int
+    id          Int        @id @default(autoincrement())
+    question    String
+    answer      String
+    location    Coordinate @relation(fields: [locationId], references: [id])
+    locationId  Int
+    completedBy Player[]   @relation("completedRiddleQuestions")
 }
 
 model Coordinate {
