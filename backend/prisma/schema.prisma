@@ -17,27 +17,27 @@ model spatial_ref_sys {
     proj4text String? @db.VarChar(2048)
 }
 
-model player {
+model Player {
     id                 Int      @id @default(autoincrement())
     name               String
     email              String
     password           String
     createdAt          DateTime @default(now())
     updatedAt          DateTime @updatedAt
-    games              game[]
+    games              Game[]
     completed_question Int[]
     score              Int
 }
 
-model game {
+model Game {
     id        Int      @id @default(autoincrement())
     name      String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    players   player[]
+    players   Player[]
 }
 
-model spacial_question {
+model SpacialQuestion {
     id         Int        @id @default(autoincrement())
     question   String
     answer     String
@@ -45,7 +45,7 @@ model spacial_question {
     locationId Int
 }
 
-model fact_question {
+model FactQuestion {
     id         Int        @id @default(autoincrement())
     question   String
     answer     String
@@ -53,7 +53,7 @@ model fact_question {
     locationId Int
 }
 
-model riddle_question {
+model RiddleQuestion {
     id         Int        @id @default(autoincrement())
     question   String
     answer     String
@@ -66,7 +66,7 @@ model Coordinate {
     latitude  Float
     longitude Float
 
-    spacial_question spacial_question[]
-    fact_question    fact_question[]
-    riddle_question  riddle_question[]
+    SpacialQuestion SpacialQuestion[]
+    FactQuestion    FactQuestion[]
+    RiddleQuestion  RiddleQuestion[]
 }
