@@ -13,11 +13,8 @@ const MapComponent = ({ handleCorrectAnswer, factQuestions }) => {
       <TileLayer
         url="https://tile.thunderforest.com/pioneer/{z}/{x}/{y}.png?apikey=6e87f65590d044e99e27369fd99280da"
         attribution='Maps &copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, 
-                     Data &copy; <a href="http://www.openstreetmap.org/copyright">
-                     OpenStreetMap</a>'
+                     Data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       />
-
-      {/* Iterate over merged questions (which have lat & lng) */}
       {factQuestions.map((q) => (
         <FactQuestion
           key={q.id}
