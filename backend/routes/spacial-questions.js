@@ -5,8 +5,8 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const fact_questions = await prisma.fact_question.findMany();
-        res.json(fact_questions);
+        const spacial_questions = await prisma.spacialQuestion.findMany();
+        res.json(spacial_questions);
     } catch (error) {
         console.error("Feil ved henting av spillere:", error);
         res.status(500).json({ error: 'Noe gikk galt' });

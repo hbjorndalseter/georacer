@@ -17,10 +17,10 @@ app.use(cors());
 app.use(express.json()); 
 
 app.use('/api/players', playerRouter);
-app.use('/api/question_coordinates', questionCoordinatesRouter);
-app.use('/api/spacial_questions', spacialQuestionRouter);
-app.use('/api/fact_questions', factQuestionRouter);
-app.use('/api/riddle_questions', riddleQuestionRouter);
+app.use('/api/questions-coordinates', questionCoordinatesRouter);
+app.use('/api/spacial-questions', spacialQuestionRouter);
+app.use('/api/fact-questions', factQuestionRouter);
+app.use('/api/riddle-questions', riddleQuestionRouter);
 
 app.get('/', (req, res) => {
     res.send({msg: 'Backend fungerer!'});
