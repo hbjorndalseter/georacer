@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const coordinates = await prisma.coordinates.findMany();
+        const coordinates = await prisma.coordinate.findMany();
         res.json(coordinates);
     } catch (error) {
         console.error("Feil ved henting av spillere:", error);
