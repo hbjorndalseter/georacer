@@ -3,8 +3,7 @@ import { PlayerProvider } from './context/PlayerContext';
 import { ToastContainer } from 'react-toastify';
 
 import StartPage from './pages/StartPage';
-import PlayPage from './pages/PlayPage';
-import ResultPage from './pages/ResultPage';
+import GamePage from './pages/GamePage';
 
 export default function App() {
   return (
