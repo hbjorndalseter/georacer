@@ -44,7 +44,9 @@ const GameMap = ({}) => {
   }, [factQuestions, questionCoordinates]);
 
   return (
-    <Map mapId={mapId}/>
+    <div className="w-screen h-screen bg-[#1b325e] justify-center items-center flex flex-col">
+            <Map mapId={mapId} />
+        </div>
   );
 };
 
