@@ -51,7 +51,7 @@ const StartGame = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#1b325e] text-white p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#1b325e] p-6">
       <h1 className="text-5xl font-bold mb-8">Velg en by</h1>
   
       {loading && <p className="text-lg text-gray-300 animate-pulse">Laster inn bykart...</p>}
@@ -61,12 +61,8 @@ const StartGame = () => {
         {cities.map((city) => (
           <button
             key={city.id}
-            className={`px-6 py-3 text-lg rounded-xl font-semibold transition duration-300 shadow-md 
-              ${
-                selectedCity?.id === city.id
-                  ? "bg-white text-grey shadow-lg scale-105"
-                  : "bg-white text-black hover:bg-gray-300"
-              }`}
+            className="px-6 py-3 text-lg rounded-xl font-semibold transition duration-300 bg-white text-black 
+                       border border-gray-300 hover:border-2 hover:border-blue-500 focus:outline-none"
             onClick={() => handleCitySelect(city)}
           >
             {city.name}
@@ -82,11 +78,11 @@ const StartGame = () => {
             value={username}
             placeholder="Skriv inn brukernavn"
             onChange={(e) => setUsername(e.target.value)}
-            className="px-4 py-3 text-black text-lg rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 mb-4 w-72 text-center"
+            className="px-4 py-3 text-white text-lg rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 mb-4 w-72 text-center"
           />
           <button
             onClick={handleStartGame}
-            className="px-8 py-3 text-lg rounded-xl font-semibold bg-white text-[#1b325e] hover:bg-gray-200 transition duration-300 shadow-md hover:scale-105"
+            className="px-8 py-3 text-lg rounded-xl font-semibold bg-white text-black hover:bg-gray-200 transition duration-300 shadow-md hover:scale-105"
           >
             Start spillet
           </button>
