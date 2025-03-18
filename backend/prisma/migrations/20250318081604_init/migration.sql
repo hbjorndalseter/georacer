@@ -2,24 +2,9 @@
 CREATE TABLE "Player" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "completed_question" INTEGER[],
     "score" INTEGER NOT NULL,
 
     CONSTRAINT "Player_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Game" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Game_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -28,6 +13,7 @@ CREATE TABLE "SpacialQuestion" (
     "question" TEXT NOT NULL,
     "answer" TEXT NOT NULL,
     "locationId" INTEGER NOT NULL,
+    "score" INTEGER NOT NULL,
 
     CONSTRAINT "SpacialQuestion_pkey" PRIMARY KEY ("id")
 );
@@ -38,6 +24,7 @@ CREATE TABLE "FactQuestion" (
     "question" TEXT NOT NULL,
     "answer" TEXT NOT NULL,
     "locationId" INTEGER NOT NULL,
+    "score" INTEGER NOT NULL,
 
     CONSTRAINT "FactQuestion_pkey" PRIMARY KEY ("id")
 );
@@ -48,6 +35,7 @@ CREATE TABLE "RiddleQuestion" (
     "question" TEXT NOT NULL,
     "answer" TEXT NOT NULL,
     "locationId" INTEGER NOT NULL,
+    "score" INTEGER NOT NULL,
 
     CONSTRAINT "RiddleQuestion_pkey" PRIMARY KEY ("id")
 );
@@ -62,15 +50,35 @@ CREATE TABLE "Coordinate" (
 );
 
 -- CreateTable
-CREATE TABLE "_GameToPlayer" (
-    "A" INTEGER NOT NULL,
-    "B" INTEGER NOT NULL,
+CREATE TABLE "Node" (
+    "id" INTEGER NOT NULL,
+    "cityMapId" INTEGER NOT NULL,
+    "lat" DOUBLE PRECISION NOT NULL,
+    "lng" DOUBLE PRECISION NOT NULL,
+    "isIntersection" BOOLEAN NOT NULL DEFAULT false,
 
-    CONSTRAINT "_GameToPlayer_AB_pkey" PRIMARY KEY ("A","B")
+    CONSTRAINT "Node_pkey" PRIMARY KEY ("cityMapId","id")
+);
+
+-- CreateTable
+CREATE TABLE "Edge" (
+    "cityMapId" INTEGER NOT NULL,
+    "node1Id" INTEGER NOT NULL,
+    "node2Id" INTEGER NOT NULL,
+
+    CONSTRAINT "Edge_pkey" PRIMARY KEY ("cityMapId","node1Id","node2Id")
+);
+
+-- CreateTable
+CREATE TABLE "CityMap" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "CityMap_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE INDEX "_GameToPlayer_B_index" ON "_GameToPlayer"("B");
+CREATE UNIQUE INDEX "Player_name_key" ON "Player"("name");
 
 -- AddForeignKey
 ALTER TABLE "SpacialQuestion" ADD CONSTRAINT "SpacialQuestion_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "Coordinate"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -82,7 +90,10 @@ ALTER TABLE "FactQuestion" ADD CONSTRAINT "FactQuestion_locationId_fkey" FOREIGN
 ALTER TABLE "RiddleQuestion" ADD CONSTRAINT "RiddleQuestion_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "Coordinate"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_GameToPlayer" ADD CONSTRAINT "_GameToPlayer_A_fkey" FOREIGN KEY ("A") REFERENCES "Game"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Node" ADD CONSTRAINT "Node_cityMapId_fkey" FOREIGN KEY ("cityMapId") REFERENCES "CityMap"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_GameToPlayer" ADD CONSTRAINT "_GameToPlayer_B_fkey" FOREIGN KEY ("B") REFERENCES "Player"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Edge" ADD CONSTRAINT "Edge_cityMapId_node1Id_fkey" FOREIGN KEY ("cityMapId", "node1Id") REFERENCES "Node"("cityMapId", "id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Edge" ADD CONSTRAINT "Edge_cityMapId_node2Id_fkey" FOREIGN KEY ("cityMapId", "node2Id") REFERENCES "Node"("cityMapId", "id") ON DELETE RESTRICT ON UPDATE CASCADE;

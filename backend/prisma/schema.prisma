@@ -18,54 +18,77 @@ model spatial_ref_sys {
 }
 
 model Player {
-    id                        Int               @id @default(autoincrement())
-    name                      String            @unique
-    games                     Game[]
-    score                     Int
-    completedSpacialQuestions SpacialQuestion[] @relation("completedSpacialQuestions")
-    completedFactQuestions    FactQuestion[]    @relation("completedFactQuestions")
-    completedRiddleQuestions  RiddleQuestion[]  @relation("completedRiddleQuestions")
-}
-
-model Game {
-    id      Int      @id @default(autoincrement())
-    name    String
-    players Player[]
+    id    Int    @id @default(autoincrement())
+    name  String @unique
+    score Int
 }
 
 model SpacialQuestion {
-    id          Int        @id @default(autoincrement())
-    question    String
-    answer      String
-    location    Coordinate @relation(fields: [locationId], references: [id])
-    locationId  Int
-    completedBy Player[]   @relation("completedSpacialQuestions")
+    id       Int    @id @default(autoincrement())
+    question String
+    answer   String
+    hint     String
+    score    Int
+
+    location  Node @relation(fields: [cityMapId, nodeId], references: [cityMapId, id])
+    nodeId    Int
+    cityMapId Int
 }
 
 model FactQuestion {
-    id          Int        @id @default(autoincrement())
-    question    String
-    answer      String
-    location    Coordinate @relation(fields: [locationId], references: [id])
-    locationId  Int
-    completedBy Player[]   @relation("completedFactQuestions")
+    id       Int    @id @default(autoincrement())
+    question String
+    answer   String
+    hint     String
+    score    Int
+
+    location  Node @relation(fields: [cityMapId, nodeId], references: [cityMapId, id])
+    nodeId    Int
+    cityMapId Int
 }
 
 model RiddleQuestion {
-    id          Int        @id @default(autoincrement())
-    question    String
-    answer      String
-    location    Coordinate @relation(fields: [locationId], references: [id])
-    locationId  Int
-    completedBy Player[]   @relation("completedRiddleQuestions")
+    id       Int    @id @default(autoincrement())
+    question String
+    answer   String
+    hint     String
+    score    Int
+
+    location  Node @relation(fields: [cityMapId, nodeId], references: [cityMapId, id])
+    nodeId    Int
+    cityMapId Int
 }
 
-model Coordinate {
-    id        Int   @id @default(autoincrement())
-    latitude  Float
-    longitude Float
+model Node {
+    id             Int
+    cityMapId      Int
+    lat            Float
+    lng            Float
+    isIntersection Boolean @default(false)
 
-    SpacialQuestion SpacialQuestion[]
+    cityMap         CityMap           @relation(fields: [cityMapId], references: [id])
+    connections1    Edge[]            @relation("foo") // When a node has the smaller ID
+    connections2    Edge[]            @relation("bar") // When a node has the larger ID
     FactQuestion    FactQuestion[]
     RiddleQuestion  RiddleQuestion[]
+    SpacialQuestion SpacialQuestion[]
+
+    @@id([cityMapId, id]) // Composite primary key
+}
+
+model Edge {
+    cityMapId Int
+    node1Id   Int // Always store the smaller node ID here
+    node2Id   Int // Always store the larger node ID here
+
+    node1 Node @relation("foo", fields: [cityMapId, node1Id], references: [cityMapId, id])
+    node2 Node @relation("bar", fields: [cityMapId, node2Id], references: [cityMapId, id])
+
+    @@id([cityMapId, node1Id, node2Id]) // Ensures each connection is unique
+}
+
+model CityMap {
+    id    Int    @id @default(autoincrement())
+    name  String
+    nodes Node[]
 }

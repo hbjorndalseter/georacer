@@ -10,6 +10,7 @@ import questionCoordinatesRouter from './routes/questions-coordinates.js';
 import spacialQuestionRouter from './routes/spacial-questions.js';
 import factQuestionRouter from './routes/fact-questions.js';
 import riddleQuestionRouter from './routes/riddle-questions.js';
+import roadnetRouter from './routes/roadnet.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -22,6 +23,7 @@ app.use('/api/questions-coordinates', questionCoordinatesRouter);
 app.use('/api/spacial-questions', spacialQuestionRouter);
 app.use('/api/fact-questions', factQuestionRouter);
 app.use('/api/riddle-questions', riddleQuestionRouter);
+app.use('/api/roadnet', roadnetRouter);
 
 app.get('/', (req, res) => {
     res.send({msg: 'Backend fungerer!'});
