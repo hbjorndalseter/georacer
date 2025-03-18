@@ -3,7 +3,7 @@ import { usePlayer } from "../context/PlayerContext";
 
 const { VITE_API_URL } = import.meta.env;
 
-const ChooseCity = () => {
+const StartGame = () => {
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
   const [username, setUsername] = useState("");
@@ -51,21 +51,22 @@ const ChooseCity = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Velg en by</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-blue-900 text-white p-6">
+      <h1 className="text-4xl font-bold mb-6">Velg en by</h1>
 
-      {loading && <p style={styles.loading}>Laster inn bykart...</p>}
-      {error && <p style={styles.error}>{error}</p>}
+      {loading && <p className="text-lg text-yellow-400">Laster inn bykart...</p>}
+      {error && <p className="text-lg text-red-500">{error}</p>}
 
-      <div style={styles.cityList}>
+      <div className="flex flex-wrap gap-4 justify-center max-w-xl">
         {cities.map((city) => (
           <button
             key={city.id}
-            style={{
-              ...styles.cityButton,
-              backgroundColor: selectedCity?.id === city.id ? "#4CAF50" : "#f0f0f0",
-              color: selectedCity?.id === city.id ? "white" : "black",
-            }}
+            className={`px-6 py-3 text-lg rounded-lg font-semibold transition duration-200 
+              ${
+                selectedCity?.id === city.id
+                  ? "bg-green-500 text-white shadow-lg"
+                  : "bg-gray-300 text-black hover:bg-gray-400"
+              }`}
             onClick={() => handleCitySelect(city)}
           >
             {city.name}
@@ -74,16 +75,19 @@ const ChooseCity = () => {
       </div>
 
       {selectedCity && (
-        <div style={styles.inputContainer}>
-          <h2 style={styles.selectedCity}>Du har valgt: {selectedCity.name}</h2>
+        <div className="mt-6 flex flex-col items-center">
+          <h2 className="text-2xl font-semibold mb-3">Du har valgt: {selectedCity.name}</h2>
           <input
             type="text"
             value={username}
             placeholder="Skriv inn brukernavn"
             onChange={(e) => setUsername(e.target.value)}
-            style={styles.input}
+            className="px-4 py-2 text-black text-lg rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4"
           />
-          <button onClick={handleStartGame} style={styles.startButton}>
+          <button
+            onClick={handleStartGame}
+            className="px-6 py-3 text-lg rounded-lg font-semibold bg-orange-500 hover:bg-orange-600 transition duration-200"
+          >
             Start spillet
           </button>
         </div>
@@ -92,73 +96,4 @@ const ChooseCity = () => {
   );
 };
 
-const styles = {
-  container: {
-    textAlign: "center",
-    backgroundColor: "#1E3A5F",
-    color: "white",
-    minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "20px",
-  },
-  title: {
-    fontSize: "2.5rem",
-    marginBottom: "20px",
-  },
-  loading: {
-    fontSize: "1.2rem",
-    color: "#FFD700",
-  },
-  error: {
-    color: "red",
-    fontSize: "1.2rem",
-  },
-  cityList: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "15px",
-    justifyContent: "center",
-    maxWidth: "600px",
-  },
-  cityButton: {
-    padding: "10px 20px",
-    fontSize: "1.2rem",
-    borderRadius: "8px",
-    border: "none",
-    cursor: "pointer",
-    transition: "background-color 0.3s, transform 0.2s",
-  },
-  selectedCity: {
-    fontSize: "1.5rem",
-    marginTop: "20px",
-  },
-  inputContainer: {
-    marginTop: "20px",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  input: {
-    padding: "10px",
-    fontSize: "1rem",
-    borderRadius: "5px",
-    border: "1px solid #ccc",
-    marginBottom: "10px",
-    textAlign: "center",
-  },
-  startButton: {
-    padding: "10px 20px",
-    fontSize: "1.2rem",
-    borderRadius: "8px",
-    border: "none",
-    cursor: "pointer",
-    backgroundColor: "#FF8C00",
-    color: "white",
-    transition: "background-color 0.3s, transform 0.2s",
-  },
-};
-
-export default ChooseCity;
+export default StartGame;
