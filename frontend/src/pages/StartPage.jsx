@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import StartButton from "../components/StartButton"
 import { useNavigate } from "react-router-dom";
-import Login from "../components/Login";
-
+import StartGame from "../components/StartGame";
 export default function StartPage() {
 
     const [players, setPlayers] = useState([]);
@@ -27,7 +26,7 @@ export default function StartPage() {
 
             </div>
             <div className="flex flex-col items-center justify-baseline">
-                <Login></Login>
+                <StartGame></StartGame>
             </div>
         </div>
         </>
