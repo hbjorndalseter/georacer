@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { usePlayer } from "../context/PlayerContext";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const { VITE_API_URL } = import.meta.env;
 
@@ -44,7 +46,15 @@ const StartGame = () => {
 
   const handleStartGame = () => {
     if (!username.trim() || !selectedCity) {
-      alert("Du må velge en by og skrive inn brukernavn!");
+      toast.error("⚠️ Du må velge en by og skrive inn brukernavn!", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+      });
       return;
     }
     loginPlayer(username, selectedCity.id);
