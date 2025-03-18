@@ -2,8 +2,8 @@ import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
 import '../styles/Map.css';
-import Arrow from './Arrow';
-import { calculatePositionOfArrow, calculateDistance } from '../utils/algorithms';
+import Arrow from './Arrow.jsx';
+import { calculatePositionOfArrow, calculateDistance } from '../utils/algorithms.js';
 
 export default function Map({ mapId }) {
 
@@ -14,12 +14,17 @@ export default function Map({ mapId }) {
     const [carRotation, setCarRotation] = useState(0);
     const [distance, setDistance] = useState(0);
 
+
+
     // Center the car in the startnode when the map first loads
     useEffect(() => {
         fetch(`http://localhost:3000/api/roadnet/${mapId}/startnode`)
             .then(response => response.json())
             .then(data => {
+                console.log(data.lat, data.lng);
                 setPosition([data.lat, data.lng]);
+            }).catch(error => {
+                console.error("Error fetching start node:", error);
             });
     }, [mapId]);
 
@@ -38,6 +43,7 @@ export default function Map({ mapId }) {
             .then(response => response.json())
             .then(data => {
                 setNeighbours(data);
+                console.log(data)
                 setArrowsVisible(true);
             });
     }, [currentNode]);
@@ -74,6 +80,17 @@ export default function Map({ mapId }) {
                                  Data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 />
                 <CenterMap />
+                {/* 
+                    Denne iterer gjennom spørsmål og rendrer de på kartet
+                    {factQuestions.map((q) => (
+                        <FactQuestion
+                        key={q.id}
+                        coords={[q.lat, q.lng]}
+                        question={q.question}
+                        correctAnswer={q.correctAnswer}
+                        onCorrectAnswer={handleCorrectAnswer}
+                        />
+                ))} */}
             </MapContainer>
 
             <img src="/redCar.png" className="carSprite" style={{

@@ -1,19 +1,27 @@
 .carSprite {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50px;
-    height: auto;
-    z-index: 1000;
-  }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 75.5px;
+  transform: translate(-50%, -50%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
 
-  .arrowSprite {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 50px;
-    height: auto;
-    z-index: 1001;
-    cursor: 'pointer'
-  }
+.arrowSprite {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 38.5px;
+  height: 12.5px;
+  z-index: 1001;
+  cursor: pointer;
+  transform-origin: top left;
+  transition: 0.3s ease;
+}
+
+#container {
+  height: 80vh !important;
+  width: 100%;
+}
