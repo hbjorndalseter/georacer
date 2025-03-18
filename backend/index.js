@@ -6,7 +6,6 @@ import express from 'express';
 import cors from 'cors';
 import prisma from './db.js';
 import playerRouter from './routes/players.js';
-import questionCoordinatesRouter from './routes/questions-coordinates.js';
 import spacialQuestionRouter from './routes/spacial-questions.js';
 import factQuestionRouter from './routes/fact-questions.js';
 import riddleQuestionRouter from './routes/riddle-questions.js';
@@ -19,7 +18,6 @@ app.use(cors());
 app.use(express.json()); 
 
 app.use('/api/players', playerRouter);
-app.use('/api/questions-coordinates', questionCoordinatesRouter);
 app.use('/api/spacial-questions', spacialQuestionRouter);
 app.use('/api/fact-questions', factQuestionRouter);
 app.use('/api/riddle-questions', riddleQuestionRouter);

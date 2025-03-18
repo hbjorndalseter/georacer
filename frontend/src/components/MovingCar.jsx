@@ -2,8 +2,8 @@ import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
 import '../styles/Map.css';
-import Arrow from './Arrow';
-import { calculatePositionOfArrow, calculateDistance } from '../utils/algorithms';
+import Arrow from './Arrow.jsx';
+import { calculatePositionOfArrow, calculateDistance } from '../utils/algorithms.js';
 
 export default function Map({ mapId }) {
 
@@ -14,12 +14,17 @@ export default function Map({ mapId }) {
     const [carRotation, setCarRotation] = useState(0);
     const [distance, setDistance] = useState(0);
 
+
+
     // Center the car in the startnode when the map first loads
     useEffect(() => {
         fetch(`http://localhost:3000/api/roadnet/${mapId}/startnode`)
             .then(response => response.json())
             .then(data => {
+                console.log(data.lat, data.lng);
                 setPosition([data.lat, data.lng]);
+            }).catch(error => {
+                console.error("Error fetching start node:", error);
             });
     }, [mapId]);
 
@@ -38,6 +43,7 @@ export default function Map({ mapId }) {
             .then(response => response.json())
             .then(data => {
                 setNeighbours(data);
+                console.log(data)
                 setArrowsVisible(true);
             });
     }, [currentNode]);
@@ -65,8 +71,8 @@ export default function Map({ mapId }) {
                 zoom={18} 
                 minZoom={18} 
                 style={{ height: '100%', width: '100%' }} 
-                dragging={false} 
-                zoomControl={false}
+                dragging={true} 
+                zoomControl={true}
             >
                 <TileLayer
                     url="https://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=6e87f65590d044e99e27369fd99280da"

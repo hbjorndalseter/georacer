@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Map from "./MovingCar";
 
-const GameMap = ({ handleCorrectAnswer}) => {
+const GameMap = ({}) => {
   const [factQuestions, setFactQuestions] = useState([]);
   const [questionCoordinates, setQuestionCoordinates] = useState([]);
   const [mergedQuestions, setMergedQuestions] = useState([]);
@@ -22,18 +22,6 @@ const GameMap = ({ handleCorrectAnswer}) => {
       });
   }, []);
 
-  // Hent question_coordinates
-  useEffect(() => {
-    fetch("http://localhost:3000/api/questions-coordinates")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("questionCoordinates fetched:", data);
-        setQuestionCoordinates(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching question coordinates:", error);
-      });
-  }, []);
 
   // Slå sammen factQuestions og questionCoordinates
   useEffect(() => {
@@ -56,10 +44,7 @@ const GameMap = ({ handleCorrectAnswer}) => {
   }, [factQuestions, questionCoordinates]);
 
   return (
-    <Map
-      mapId={mapId}
-    //Send inn eventuelle questions her som skal displayes
-    />
+    <Map mapId={mapId}/>
   );
 };
 
