@@ -64,11 +64,10 @@ model RiddleQuestion {
 }
 
 model Node {
-    id             Int
-    cityMapId      Int
-    lat            Float
-    lng            Float
-    isIntersection Boolean @default(false)
+    id        Int
+    cityMapId Int
+    lat       Float
+    lng       Float
 
     cityMap         CityMap           @relation(fields: [cityMapId], references: [id])
     connections1    Edge[]            @relation("foo") // When a node has the smaller ID
