@@ -12,7 +12,7 @@ export default function App() {
         <div className="app">
           <Routes>
             <Route path="/" element={<StartPage />} />
-            <Route path="/Play" element={<PlayPage />} />
+            <Route path="/Game" element={<GamePage />} />
             <Route path="/Result" element={<ResultPage />} />
           </Routes>
         </div>
