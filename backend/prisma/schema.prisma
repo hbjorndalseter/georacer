@@ -18,46 +18,36 @@ model spatial_ref_sys {
 }
 
 model Player {
-    id                        Int               @id @default(autoincrement())
-    name                      String            @unique
-    games                     Game[]
-    score                     Int
-    completedSpacialQuestions SpacialQuestion[] @relation("completedSpacialQuestions")
-    completedFactQuestions    FactQuestion[]    @relation("completedFactQuestions")
-    completedRiddleQuestions  RiddleQuestion[]  @relation("completedRiddleQuestions")
-}
-
-model Game {
-    id      Int      @id @default(autoincrement())
-    name    String
-    players Player[]
+    id    Int    @id @default(autoincrement())
+    name  String @unique
+    score Int
 }
 
 model SpacialQuestion {
-    id          Int        @id @default(autoincrement())
-    question    String
-    answer      String
-    location    Coordinate @relation(fields: [locationId], references: [id])
-    locationId  Int
-    completedBy Player[]   @relation("completedSpacialQuestions")
+    id         Int        @id @default(autoincrement())
+    question   String
+    answer     String
+    location   Coordinate @relation(fields: [locationId], references: [id])
+    locationId Int
+    score      Int
 }
 
 model FactQuestion {
-    id          Int        @id @default(autoincrement())
-    question    String
-    answer      String
-    location    Coordinate @relation(fields: [locationId], references: [id])
-    locationId  Int
-    completedBy Player[]   @relation("completedFactQuestions")
+    id         Int        @id @default(autoincrement())
+    question   String
+    answer     String
+    location   Coordinate @relation(fields: [locationId], references: [id])
+    locationId Int
+    score      Int
 }
 
 model RiddleQuestion {
-    id          Int        @id @default(autoincrement())
-    question    String
-    answer      String
-    location    Coordinate @relation(fields: [locationId], references: [id])
-    locationId  Int
-    completedBy Player[]   @relation("completedRiddleQuestions")
+    id         Int        @id @default(autoincrement())
+    question   String
+    answer     String
+    location   Coordinate @relation(fields: [locationId], references: [id])
+    locationId Int
+    score      Int
 }
 
 model Coordinate {
