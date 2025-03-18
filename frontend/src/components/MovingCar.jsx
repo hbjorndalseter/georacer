@@ -3,6 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
 import '../styles/Map.css';
 import Arrow from './Arrow.jsx';
+import carURL from '../assets/redCar.png'
 import { calculatePositionOfArrow, calculateDistance } from '../utils/algorithms.js';
 
 export default function Map({ mapId }) {
@@ -93,7 +94,7 @@ export default function Map({ mapId }) {
                 ))} */}
             </MapContainer>
 
-            <img src="/redCar.png" className="carSprite" style={{
+            <img src={carURL} className="carSprite" style={{
                 transform: `translate(-50%, -50%) rotate(${carRotation}deg)`
             }} />
 
