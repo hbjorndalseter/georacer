@@ -37,6 +37,23 @@ router.get('/:cityMapId/startnode', async (req, res) => {
     }
 });
 
+// Get a specific node in a given city map
+router.get('/:cityMapId/:nodeId', async (req, res) => {
+    try {
+        const node = await prisma.node.findFirst({
+            where: {
+                cityMapId: parseInt(req.params.cityMapId),
+                id: parseInt(req.params.nodeId)
+            }
+        });
+        console.log("Node:", node)
+        res.json(node);
+    } catch (error) {
+        console.error("Feil ved henting av node:", error);
+        res.status(500).json({ error: 'Noe forferdelig gikk galt' });
+    }
+});
+
 // Get neighbours of a given node in a given city map
 router.get('/:cityMapId/:nodeId/neighbours', async (req, res) => {
     try {

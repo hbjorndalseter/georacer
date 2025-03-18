@@ -3,20 +3,22 @@ import prisma from '../db.js';
 
 const router = express.Router();
 
-const getOrCreatePlayer = async (name, cityMapId) => {
-    let player = await prisma.player.findFirst({
-        where: { name, cityMapId },
+const getOrCreatePlayer = async (name) => {
+    // Prøv å finne spilleren med gitt navn
+    let player = await prisma.player.findUnique({
+        where: { name },
     });
 
     let isNewPlayer = false;
 
     if (!player) {
+        // Opprett ny spiller
         player = await prisma.player.create({
-            data: { name, score: 0, cityMapId },
+            data: { name, score: 0, cityMapId: 1 },
         });
         isNewPlayer = true;
     }
-
+   
     return { player, isNewPlayer };
 };
 
@@ -68,15 +70,14 @@ router.delete('/:id', async (req, res) => {
 
 //Login eller lag ny spiller
 router.post('/login', async (req, res) => {
-    const { name, cityMapId } = req.body;
+    const { name } = req.body;
 
-    if (!name || !cityMapId) {
-        return res.status(400).json({ error: "Navn og CityMap ID må oppgis" });
+    if (!name) {
+        return res.status(400).json({ error: 'Navn må oppgis' });
     }
-
     try {
-        const { player, isNewPlayer } = await getOrCreatePlayer(name, cityMapId);
-        res.json({ player });
+        const {player, isNewPlayer} = await getOrCreatePlayer(name);
+        res.json({player});
     } catch (error) {
         console.error("Feil ved opprettelse av spiller:", error);
         res.status(500).json({ error: error.message });
