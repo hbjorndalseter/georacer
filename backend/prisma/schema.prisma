@@ -80,7 +80,7 @@ model Node {
 }
 
 model Edge {
-    cityMapId Int @unique
+    cityMapId Int
     node1Id   Int // Always store the smaller node ID here
     node2Id   Int // Always store the larger node ID here
 
