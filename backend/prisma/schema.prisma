@@ -18,9 +18,11 @@ model spatial_ref_sys {
 }
 
 model Player {
-    id    Int    @id @default(autoincrement())
-    name  String @unique
-    score Int
+    id        Int     @id @default(autoincrement())
+    name      String  @unique
+    score     Int
+    cityMap   CityMap @relation(fields: [cityMapId], references: [id])
+    cityMapId Int
 }
 
 model SpacialQuestion {
@@ -88,7 +90,8 @@ model Edge {
 }
 
 model CityMap {
-    id    Int    @id @default(autoincrement())
-    name  String
-    nodes Node[]
+    id      Int      @id @default(autoincrement())
+    name    String
+    nodes   Node[]
+    players Player[]
 }

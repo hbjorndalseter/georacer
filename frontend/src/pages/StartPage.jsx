@@ -17,11 +17,6 @@ export default function StartPage() {
     }
     , []);
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        navigate('/Play'); // Naviger til spillsiden
-    };
-
     return (
         <>
         <div className="w-screen h-screen bg-[#1b325e] justify-between items-center flex flex-col">
