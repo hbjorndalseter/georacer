@@ -24,7 +24,7 @@ export const PlayerProvider = ({ children }) => {
 
       const data = await res.json();
       setPlayer(data.player); // Lagre spilleren i context
-      navigate("/Play"); // Naviger til PlayPage etter login
+      navigate("/Game"); // Naviger til PlayPage etter login
     } catch (error) {
       console.error("Feil ved login:", error);
     }
