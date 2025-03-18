@@ -3,6 +3,7 @@ import { PlayerProvider } from './context/PlayerContext';
 
 import StartPage from './pages/StartPage';
 import PlayPage from './pages/PlayPage';
+import ResultPage from './pages/ResultPage';
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<StartPage />} />
           <Route path="/Play" element={<PlayPage />} />
+          <Route path="/Result" element={<ResultPage />} />
         </Routes>
       </div>
       </PlayerProvider>
