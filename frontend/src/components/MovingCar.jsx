@@ -71,8 +71,8 @@ export default function Map({ mapId }) {
                 zoom={18} 
                 minZoom={18} 
                 style={{ height: '100%', width: '100%' }} 
-                dragging={true} 
-                zoomControl={true}
+                dragging={false} 
+                zoomControl={false}
             >
                 <TileLayer
                     url="https://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=6e87f65590d044e99e27369fd99280da"
@@ -80,6 +80,17 @@ export default function Map({ mapId }) {
                                  Data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 />
                 <CenterMap />
+                {/* 
+                    Denne iterer gjennom spørsmål og rendrer de på kartet
+                    {factQuestions.map((q) => (
+                        <FactQuestion
+                        key={q.id}
+                        coords={[q.lat, q.lng]}
+                        question={q.question}
+                        correctAnswer={q.correctAnswer}
+                        onCorrectAnswer={handleCorrectAnswer}
+                        />
+                ))} */}
             </MapContainer>
 
             <img src="/redCar.png" className="carSprite" style={{
