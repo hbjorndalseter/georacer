@@ -30,10 +30,9 @@ model SpacialQuestion {
     hint     String
     score    Int
 
-    location   Node    @relation(fields: [locationId], references: [id])
-    locationId Int
-    citymap    CityMap @relation(fields: [citymapId], references: [id])
-    citymapId  Int
+    location  Node @relation(fields: [cityMapId, nodeId], references: [cityMapId, id])
+    nodeId    Int
+    cityMapId Int
 }
 
 model FactQuestion {
@@ -43,10 +42,9 @@ model FactQuestion {
     hint     String
     score    Int
 
-    location   Node    @relation(fields: [locationId], references: [id])
-    locationId Int
-    citymap    CityMap @relation(fields: [citymapId], references: [id])
-    citymapId  Int
+    location  Node @relation(fields: [cityMapId, nodeId], references: [cityMapId, id])
+    nodeId    Int
+    cityMapId Int
 }
 
 model RiddleQuestion {
@@ -56,14 +54,13 @@ model RiddleQuestion {
     hint     String
     score    Int
 
-    location   Node    @relation(fields: [locationId], references: [id])
-    locationId Int
-    citymap    CityMap @relation(fields: [citymapId], references: [id])
-    citymapId  Int
+    location  Node @relation(fields: [cityMapId, nodeId], references: [cityMapId, id])
+    nodeId    Int
+    cityMapId Int
 }
 
 model Node {
-    id             Int     @unique
+    id             Int
     cityMapId      Int
     lat            Float
     lng            Float
@@ -94,8 +91,4 @@ model CityMap {
     id    Int    @id @default(autoincrement())
     name  String
     nodes Node[]
-
-    SpacialQuestion SpacialQuestion[]
-    FactQuestion    FactQuestion[]
-    RiddleQuestion  RiddleQuestion[]
 }
