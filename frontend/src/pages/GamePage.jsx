@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import InteractiveMap from "../components/InteractiveMap";
+import { useNavigate } from "react-router-dom";
 
 export default function GamePage() {
+
+  
+  const navigate = useNavigate();
 
   const mapId = 1;
   const [factQuestions, setFactQuestions] = useState([]);
@@ -53,7 +57,8 @@ export default function GamePage() {
           console.error("Error fetching next checkpoint node:", error);
         });
     } else {
-      console.log("Game over");
+      // Navigate to startgamepage
+      navigate("/");
     }
   };
 
