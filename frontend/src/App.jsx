@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PlayerProvider } from './context/PlayerContext';
 
 import StartPage from './pages/StartPage';
-import PlayPage from './pages/GamePage';
+import GamePage from './pages/GamePage';
 
 export default function App() {
   return (
@@ -11,7 +11,7 @@ export default function App() {
       <div className="app">
         <Routes>
           <Route path="/" element={<StartPage />} />
-          <Route path="/Play" element={<PlayPage />} />
+          <Route path="/Play" element={<GamePage />} />
         </Routes>
       </div>
       </PlayerProvider>

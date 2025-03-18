@@ -1,7 +1,6 @@
 import L from 'leaflet';
 
-// Calculate the position and rotation-angle of an arrow by projecting the coordinates
-// Lon = x, Lat = y
+// Algorithm to calculate the position and rotation of the arrow image relative to the car image
 function calculatePositionOfArrow(latNeighbour, lonNeighbour, latCurrentNode, lonCurrentNode) {
     const car_width = 40;      // Width of the car image in px
     const car_height = 75.5;   // Height of the car image in px

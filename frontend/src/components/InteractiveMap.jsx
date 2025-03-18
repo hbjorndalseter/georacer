@@ -1,14 +1,14 @@
-import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
-import '../styles/Map.css';
+import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet';
+import { calculatePositionOfArrow, calculateDistance } from '../utils/algorithms.js';
 import Arrow from './Arrow.jsx';
 import carURL from '../assets/redCar.png'
-import { calculatePositionOfArrow, calculateDistance } from '../utils/algorithms.js';
+import 'leaflet/dist/leaflet.css';
+import '../styles/Map.css';
 
-export default function InteractiveMap({ mapId, nextCheckpointNode, nextCheckpointTask, onCheckpointReached }) {
+export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached }) {
 
-    const [position, setPosition] = useState([63.4305, 10.3951]);
+    const [position, setPosition] = useState([63.4305, 10.3951]); // Temporary start, add loading spinner
     const [currentNode, setCurrentNode] = useState(1); // Start node is always 1
     const [neighbours, setNeighbours] = useState([]);
     const [arrowsVisible, setArrowsVisible] = useState(true);
@@ -43,7 +43,7 @@ export default function InteractiveMap({ mapId, nextCheckpointNode, nextCheckpoi
                 setNeighbours(data);
                 setArrowsVisible(true);
             });
-        if (nextCheckpointNode && currentNode === nextCheckpointNode.id) {
+        if (checkpointNode && currentNode === checkpointNode.id) {
             onCheckpointReached();
         }
     }, [currentNode]);
@@ -73,6 +73,7 @@ export default function InteractiveMap({ mapId, nextCheckpointNode, nextCheckpoi
                 style={{ height: '100%', width: '100%' }}
                 dragging={false}
                 zoomControl={false}
+                doubleClickZoom={false}
             >
                 <TileLayer
                     url="https://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=6e87f65590d044e99e27369fd99280da"
@@ -80,8 +81,8 @@ export default function InteractiveMap({ mapId, nextCheckpointNode, nextCheckpoi
                                  Data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 />
                 <CenterMap />
-                {nextCheckpointNode && (
-                    <Marker position={[nextCheckpointNode.lat, nextCheckpointNode.lng]}/>
+                {checkpointNode && (
+                    <Marker position={[checkpointNode.lat, checkpointNode.lng]}/>
                 )}
             </MapContainer>
 
