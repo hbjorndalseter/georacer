@@ -24,58 +24,63 @@ model Player {
 }
 
 model SpacialQuestion {
-    id         Int        @id @default(autoincrement())
-    question   String
-    answer     String
-    location   Coordinate @relation(fields: [locationId], references: [id])
+    id       Int    @id @default(autoincrement())
+    question String
+    answer   String
+    hint     String
+    score    Int
+
+    location   Node    @relation(fields: [locationId], references: [id])
     locationId Int
-    score      Int
+    citymap    CityMap @relation(fields: [citymapId], references: [id])
+    citymapId  Int
 }
 
 model FactQuestion {
-    id         Int        @id @default(autoincrement())
-    question   String
-    answer     String
-    location   Coordinate @relation(fields: [locationId], references: [id])
+    id       Int    @id @default(autoincrement())
+    question String
+    answer   String
+    hint     String
+    score    Int
+
+    location   Node    @relation(fields: [locationId], references: [id])
     locationId Int
-    score      Int
+    citymap    CityMap @relation(fields: [citymapId], references: [id])
+    citymapId  Int
 }
 
 model RiddleQuestion {
-    id         Int        @id @default(autoincrement())
-    question   String
-    answer     String
-    location   Coordinate @relation(fields: [locationId], references: [id])
+    id       Int    @id @default(autoincrement())
+    question String
+    answer   String
+    hint     String
+    score    Int
+
+    location   Node    @relation(fields: [locationId], references: [id])
     locationId Int
-    score      Int
-}
-
-model Coordinate {
-    id        Int   @id @default(autoincrement())
-    latitude  Float
-    longitude Float
-
-    SpacialQuestion SpacialQuestion[]
-    FactQuestion    FactQuestion[]
-    RiddleQuestion  RiddleQuestion[]
+    citymap    CityMap @relation(fields: [citymapId], references: [id])
+    citymapId  Int
 }
 
 model Node {
-    id             Int
+    id             Int     @unique
     cityMapId      Int
     lat            Float
     lng            Float
     isIntersection Boolean @default(false)
 
-    cityMap      CityMap @relation(fields: [cityMapId], references: [id])
-    connections1 Edge[]  @relation("foo") // When a node has the smaller ID
-    connections2 Edge[]  @relation("bar") // When a node has the larger ID
+    cityMap         CityMap           @relation(fields: [cityMapId], references: [id])
+    connections1    Edge[]            @relation("foo") // When a node has the smaller ID
+    connections2    Edge[]            @relation("bar") // When a node has the larger ID
+    FactQuestion    FactQuestion[]
+    RiddleQuestion  RiddleQuestion[]
+    SpacialQuestion SpacialQuestion[]
 
     @@id([cityMapId, id]) // Composite primary key
 }
 
 model Edge {
-    cityMapId Int
+    cityMapId Int @unique
     node1Id   Int // Always store the smaller node ID here
     node2Id   Int // Always store the larger node ID here
 
@@ -89,4 +94,8 @@ model CityMap {
     id    Int    @id @default(autoincrement())
     name  String
     nodes Node[]
+
+    SpacialQuestion SpacialQuestion[]
+    FactQuestion    FactQuestion[]
+    RiddleQuestion  RiddleQuestion[]
 }
