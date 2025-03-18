@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PlayerProvider } from './context/PlayerContext';
 import { ToastContainer } from 'react-toastify';
-
+import ResultPage from './pages/ResultPage';
 import StartPage from './pages/StartPage';
 import GamePage from './pages/GamePage';
 
