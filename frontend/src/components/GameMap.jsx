@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
-import MapComponent from "./MapComponent";
+import Map from "./MovingCar";
 
-const GameMap = ({ handleCorrectAnswer }) => {
+const GameMap = ({ handleCorrectAnswer}) => {
   const [factQuestions, setFactQuestions] = useState([]);
   const [questionCoordinates, setQuestionCoordinates] = useState([]);
   const [mergedQuestions, setMergedQuestions] = useState([]);
+
+  //Tester kun for gamemap 1
+  let mapId = 1;
 
   // Hent fact_questions
   useEffect(() => {
@@ -53,9 +56,9 @@ const GameMap = ({ handleCorrectAnswer }) => {
   }, [factQuestions, questionCoordinates]);
 
   return (
-    <MapComponent
-      handleCorrectAnswer={handleCorrectAnswer}
-      factQuestions={mergedQuestions}
+    <Map
+      mapId={mapId}
+    //Send inn eventuelle questions her som skal displayes
     />
   );
 };

@@ -35,7 +35,7 @@ const PlayPage = () => {
         Score: {score}
       </div>
 
-      <GameMap handleCorrectAnswer={handleCorrectAnswer} />
+      <GameMap handleCorrectAnswer={handleCorrectAnswer}/>
     </div>
   );
 };
