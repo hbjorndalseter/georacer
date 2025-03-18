@@ -10,12 +10,12 @@ export const PlayerProvider = ({ children }) => {
   const navigate = useNavigate();
 
   // Henter ut eller oppretter spilleren i databasen
-  const loginPlayer = async (username) => {
+  const loginPlayer = async (username, cityMapId) => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/players/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: username }),
+        body: JSON.stringify({ name: username, cityMapId }),
       });
 
       if (!res.ok) {
