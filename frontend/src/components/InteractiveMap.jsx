@@ -90,8 +90,6 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
                 transform: `translate(-50%, -50%) rotate(${carRotation}deg)`
             }} />
 
-
-
             {arrowsVisible && neighbours.map((neighbour) => {
                 let { rot_angle, x_p, y_p } = calculatePositionOfArrow(
                     neighbour.lat,

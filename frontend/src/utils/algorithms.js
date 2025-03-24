@@ -39,4 +39,8 @@ function calculateDistance(latNeighbour, lonNeighbour, latCurrentNode, lonCurren
     return Math.sqrt((neighbourPoint.x - currentPoint.x) ** 2 + (neighbourPoint.y - currentPoint.y) ** 2);
 }
 
-export { calculatePositionOfArrow, calculateDistance };
+function dijkstraShortestPath() {
+    
+}
+
+export { calculatePositionOfArrow, calculateDistance, dijkstraShortestPath };
