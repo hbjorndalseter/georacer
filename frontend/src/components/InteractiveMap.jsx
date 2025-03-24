@@ -6,14 +6,14 @@ import carURL from '../assets/redCar.png'
 import 'leaflet/dist/leaflet.css';
 import '../styles/Map.css';
 
-export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached }) {
+export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached, onMove }) {
 
     const [position, setPosition] = useState([63.4305, 10.3951]); // Temporary start, add loading spinner
     const [currentNode, setCurrentNode] = useState(1); // Start node is always 1
     const [neighbours, setNeighbours] = useState([]);
     const [arrowsVisible, setArrowsVisible] = useState(true);
     const [carRotation, setCarRotation] = useState(0);
-    const [distance, setDistance] = useState(0);
+    const [distanceToNextNode, setDistanceToNextNode] = useState(0);
 
     // Center the car in the startnode when the map first loads
     useEffect(() => {
@@ -30,7 +30,7 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
     function CenterMap() {
         const map = useMap();
         useEffect(() => {
-            map.panTo(position, { animate: true, duration: distance / 250 });
+            map.panTo(position, { animate: true, duration: distanceToNextNode / 250 });
         }, [position, map]);
         return null;
     }
@@ -52,16 +52,17 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
     function handleArrowClick(neighbour, rot_angle) {
         setArrowsVisible(false);
 
-        const distance = calculateDistance(neighbour.lat, neighbour.lng, position[0], position[1]);
-
         setCarRotation(rot_angle + 90);
-        setDistance(distance);
+    
+        const distance = calculateDistance(neighbour.lat, neighbour.lng, position[0], position[1]);
+        onMove(distance); // Update the total distance moved
+        setDistanceToNextNode(distance);
         setPosition([neighbour.lat, neighbour.lng]);
 
         // Update the current node after the animation completes
         setTimeout(() => {
             setCurrentNode(neighbour.id);
-        }, 4 * distance);
+        }, 4 * distanceToNextNode);
     }
 
     return (

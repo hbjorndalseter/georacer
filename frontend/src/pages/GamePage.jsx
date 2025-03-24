@@ -14,6 +14,7 @@ export default function GamePage() {
   const [checkpointNode, setCheckpointNode] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentScore, setCurrentScore] = useState(0);
+  const [totalDistanceMoved, setTotalDistanceMoved] = useState(0);
 
   // Overlay state and flag for first load.
   const [isOverlayActive, setIsOverlayActive] = useState(true);
@@ -59,6 +60,11 @@ export default function GamePage() {
     setShowModal(true);
   };
 
+  const onMove = (distance) => {
+    setTotalDistanceMoved(totalDistanceMoved + distance);
+    console.log("Total distance moved:", totalDistanceMoved+distance);
+  };
+
   const handleAnswerSubmit = async (userAnswer) => {
     if (
       userAnswer.trim().toLowerCase() ===
@@ -99,6 +105,7 @@ export default function GamePage() {
           mapId={mapId}
           checkpointNode={checkpointNode}
           onCheckpointReached={handleCheckpointReached}
+          onMove={onMove}
         />
       )}
       {showModal && currentQuestion && (
