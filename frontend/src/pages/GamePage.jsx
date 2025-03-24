@@ -6,92 +6,89 @@ import { usePlayer } from "../context/PlayerContext";
 import { updateScore } from "../utils/updateScore";
 
 export default function GamePage() {
-
   const { player, updatePlayerScore } = usePlayer();
   const navigate = useNavigate();
-  const mapId = player?.cityMapId; 
+  const mapId = player?.cityMapId;
   const [factQuestions, setFactQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [checkpointNode, setCheckpointNode] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentScore, setCurrentScore] = useState(0);
 
-  // Fetch fact questions on component mount
+  // Overlay state and a flag to show it only on the first load.
+  const [isOverlayActive, setIsOverlayActive] = useState(true);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+  // Fetch fact questions.
   useEffect(() => {
     fetch(`http://localhost:3000/api/fact-questions/${mapId}`)
       .then((res) => res.json())
-      .then((data) => {
-        setFactQuestions(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching fact questions:", error);
-      });
+      .then((data) => setFactQuestions(data))
+      .catch((error) =>
+        console.error("Error fetching fact questions:", error)
+      );
   }, [mapId]);
 
-  // When factQuestions are available, set the first question and fetch its checkpoint node.
+  // When factQuestions are available, load the first question and its checkpoint node.
   useEffect(() => {
     if (factQuestions.length > 0) {
       const firstQuestion = factQuestions[0];
       setCurrentQuestion(firstQuestion);
-      // Reset the map-rendered flag as new data is being fetched.
-      setIsMapRendered(false);
-      fetch(`http://localhost:3000/api/roadnet/${mapId}/${firstQuestion.nodeId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Next checkpoint node fetched:", data);
-          setCheckpointNode(data);
-          setIsDataLoaded(true); // Data is loaded, now waiting on the map to render.
-        })
-        .catch((error) => {
-          console.error("Error fetching next checkpoint node:", error);
-          setIsDataLoaded(true);
-        });
+      // If it's the first load, show the overlay for 3 seconds.
+      if (isFirstLoad) {
+        setIsOverlayActive(true);
+        fetch(`http://localhost:3000/api/roadnet/${mapId}/${firstQuestion.nodeId}`)
+          .then((res) => res.json())
+          .then((data) => setCheckpointNode(data))
+          .catch((error) =>
+            console.error("Error fetching checkpoint node:", error)
+          );
+        setTimeout(() => {
+          setIsOverlayActive(false);
+          setIsFirstLoad(false); // Now mark that first load is complete.
+        }, 3000);
+      } else {
+        // For subsequent loads, simply fetch without overlay.
+        fetch(`http://localhost:3000/api/roadnet/${mapId}/${firstQuestion.nodeId}`)
+          .then((res) => res.json())
+          .then((data) => setCheckpointNode(data))
+          .catch((error) =>
+            console.error("Error fetching checkpoint node:", error)
+          );
+      }
     }
-  }, [factQuestions, mapId]);
+  }, [factQuestions, mapId, isFirstLoad]);
 
-  // Callback to be passed to InteractiveMap.
-  const handleMapRendered = () => {
-    setIsMapRendered(true);
-  };
-
-  // Handle the checkpoint reached event.
   const handleCheckpointReached = () => {
     setShowModal(true);
   };
 
-  // Handle answer submission in the modal
   const handleAnswerSubmit = async (userAnswer) => {
     if (
       userAnswer.trim().toLowerCase() ===
       currentQuestion.answer.trim().toLowerCase()
     ) {
-      alert(`Correct! You've earned ${currentQuestion.score} points. Points added to user ${player.name}`);
+      alert(
+        `Correct! You've earned ${currentQuestion.score} points. Points added to user ${player.name}`
+      );
       const newScore = currentScore + currentQuestion.score;
       setCurrentScore(newScore);
-
       const currentIndex = factQuestions.indexOf(currentQuestion);
       const nextQuestionIndex = currentIndex + 1;
       if (nextQuestionIndex < factQuestions.length) {
         const nextQuestion = factQuestions[nextQuestionIndex];
         setCurrentQuestion(nextQuestion);
-        // Reset both flags when moving to a new question.
-        setIsDataLoaded(false);
-        setIsMapRendered(false);
+        // For subsequent questions, we no longer show the overlay.
         fetch(`http://localhost:3000/api/roadnet/${mapId}/${nextQuestion.nodeId}`)
           .then((res) => res.json())
-          .then((data) => {
-            console.log("Next checkpoint node fetched:", data);
-            setCheckpointNode(data);
-            setIsDataLoaded(true);
-          })
-          .catch((error) => {
-            console.error("Error fetching next checkpoint node:", error);
-            setIsDataLoaded(true);
-          });
+          .then((data) => setCheckpointNode(data))
+          .catch((error) =>
+            console.error("Error fetching checkpoint node:", error)
+          );
       } else {
         await updateScore(player, newScore);
         updatePlayerScore(newScore);
-        navigate("/"); // Navigate to the results page if no more questions
+        navigate("/");
       }
     } else {
       alert("Incorrect answer. Try again!");
@@ -107,7 +104,6 @@ export default function GamePage() {
           mapId={mapId}
           checkpointNode={checkpointNode}
           onCheckpointReached={handleCheckpointReached}
-          onMapRendered={handleMapRendered} // Trigger when the map is fully rendered
         />
       )}
       {showModal && currentQuestion && (
@@ -117,8 +113,16 @@ export default function GamePage() {
           onClose={() => setShowModal(false)}
         />
       )}
-      {(!isDataLoaded || !isMapRendered) && (
-        <div className="absolute inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
+      {isOverlayActive && (
+        <div
+          className="fixed inset-0 flex justify-center items-center bg-[#1b325e] bg-opacity-50"
+          style={{
+            zIndex: 9999,
+            transition: "opacity 0.5s ease",
+            opacity: isOverlayActive ? 1 : 0,
+            pointerEvents: isOverlayActive ? "auto" : "none",
+          }}
+        >
           <div className="loader text-white text-xl">Loading...</div>
         </div>
       )}
