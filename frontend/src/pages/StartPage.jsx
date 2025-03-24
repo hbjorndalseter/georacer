@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import StartGame from "../components/StartGame";
+import { dijkstraShortestPath } from "../utils/algorithms";
+
 export default function StartPage() {
 
     const [players, setPlayers] = useState([]);
@@ -12,8 +14,10 @@ export default function StartPage() {
             .then(response => response.json())
             .then(data => setPlayers(data))
             .catch(error => console.error("Error:", error));
+        dijkstraShortestPath(1,1,2).then(result => console.log(result));
     }
     , []);
+
 
     return (
         <>

@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import Heap from 'heap-js';
 
 // Algorithm to calculate the position and rotation of the arrow image relative to the car image
 function calculatePositionOfArrow(latNeighbour, lonNeighbour, latCurrentNode, lonCurrentNode) {
@@ -33,14 +34,87 @@ function calculatePositionOfArrow(latNeighbour, lonNeighbour, latCurrentNode, lo
     return { rot_angle, x_p, y_p };
 }
 
-function calculateDistance(latNeighbour, lonNeighbour, latCurrentNode, lonCurrentNode) {
-    const currentPoint = L.CRS.EPSG3857.project(L.latLng(latCurrentNode, lonCurrentNode));
-    const neighbourPoint = L.CRS.EPSG3857.project(L.latLng(latNeighbour, lonNeighbour));
-    return Math.sqrt((neighbourPoint.x - currentPoint.x) ** 2 + (neighbourPoint.y - currentPoint.y) ** 2);
+// Haversine formula to calculate the distance between two points on the Earth's surface
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371000; // Earth's radius in meters
+    const toRad = deg => deg * Math.PI / 180;
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) ** 2 +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+              Math.sin(dLon / 2) ** 2;
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in meters
 }
 
-function dijkstraShortestPath() {
-    
+async function dijkstraShortestPath(mapId, startNodeId, endNodeId) {
+    const minHeap = new Heap((a, b) => a.distance - b.distance);
+
+    // Maps for quick access to distances and nodes
+    const distancesMap = new Map(); // Distance from start node
+    const nodeMap = new Map();
+    const visitedNodes = new Set();
+
+    // Fetch all nodes and map by ID for quick access
+    const nodes = await fetch(`http://localhost:3000/api/roadnet/${mapId}/nodes`)
+        .then(res => res.json());
+
+    for (const node of nodes) {
+        nodeMap.set(node.id, node);
+    }
+
+    // Check if start and end nodes exist
+    if (!nodeMap.has(startNodeId) || !nodeMap.has(endNodeId)) {
+        throw new Error("Start or end node ID not found.");
+    }
+
+    // Initialize distances and heap
+    for (const node of nodes) {
+        const distance = node.id === startNodeId ? 0 : Infinity;
+        minHeap.push({ id: node.id, distance });
+        distancesMap.set(node.id, distance);
+    }
+
+    // Dijkstra's algorithm main loop
+    while (!minHeap.isEmpty()) {
+        console.log(distancesMap);
+        const { id: currentId, distance: currentDistance } = minHeap.pop();
+        // if (visitedNodes.has(currentId)) continue;
+        visitedNodes.add(currentId);
+
+        // Check if we reached the end node
+        if (currentId === endNodeId) {
+            return currentDistance;
+        }
+
+        // Fetch neighbours of the current node
+        const neighbours = await fetch(`http://localhost:3000/api/roadnet/${mapId}/${currentId}/neighbours`)
+            .then(res => res.json());
+
+
+        for (const neighbour of neighbours) {
+            const neighbourId = neighbour.id;
+            if (visitedNodes.has(neighbourId)) continue;
+
+            const currentNode = nodeMap.get(currentId);
+
+            const distanceToNeighbour = currentDistance + calculateDistance(
+                neighbour.lat, neighbour.lng,
+                currentNode.lat, currentNode.lng
+            );
+
+            if (distanceToNeighbour < (distancesMap.get(neighbourId) ?? Infinity)) {
+                distancesMap.set(neighbourId, distanceToNeighbour);
+                minHeap.remove(el => el.id === neighbourId);
+                minHeap.push({ id: neighbourId, distance: distanceToNeighbour });
+            }
+        }
+    }
+
+    return Infinity; // No path found
 }
+
 
 export { calculatePositionOfArrow, calculateDistance, dijkstraShortestPath };

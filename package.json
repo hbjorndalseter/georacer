@@ -21,6 +21,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "georacer": "file:",
+    "heap-js": "^2.6.0",
     "leaflet": "^1.9.4",
     "pg": "^8.13.3",
     "react": "^19.0.0",
