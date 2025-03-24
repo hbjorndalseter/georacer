@@ -84,7 +84,7 @@ export default function GamePage() {
       } else {
         await updateScore(player, newScore);
         updatePlayerScore(newScore);
-        navigate("/");
+        navigate("/Result");
       }
     } else {
       alert("Incorrect answer. Try again!");
