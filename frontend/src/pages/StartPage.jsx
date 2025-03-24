@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import StartButton from "../components/StartButton"
 import { useNavigate } from "react-router-dom";
 import StartGame from "../components/StartGame";
 export default function StartPage() {
