@@ -1,44 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { usePlayer } from "../context/PlayerContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const { VITE_API_URL } = import.meta.env;
+import trondheimBildeURL from "../assets/nidarosdomen.png";
+import osloBildeURL from "../assets/slottet.png";
+
+const cityOptions = [
+  {
+    id: 1,
+    name: "Trondheim",
+    imageUrl: trondheimBildeURL,
+  },
+  {
+    id: 2,
+    name: "Oslo",
+    imageUrl: osloBildeURL,
+  },
+];
 
 const StartGame = () => {
-  const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
   const [username, setUsername] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const { loginPlayer } = usePlayer();
-
-  useEffect(() => {
-    const fetchCities = async () => {
-      if (!VITE_API_URL) {
-        console.error("VITE_API_URL er ikke definert!");
-        setError("Kan ikke hente bykart – server-URL mangler.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const res = await fetch(`${VITE_API_URL}/api/city-maps`);
-        if (!res.ok) {
-          throw new Error(`Feil ved henting av bykart. HTTP-status: ${res.status}`);
-        }
-        const data = await res.json();
-        setCities(data);
-      } catch (error) {
-        console.error("Feil ved henting av bykart:", error);
-        setError("Kunne ikke hente bykart. Prøv igjen senere.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCities();
-  }, []);
 
   const handleCitySelect = (city) => {
     setSelectedCity(city);
@@ -60,44 +44,74 @@ const StartGame = () => {
     loginPlayer(username, selectedCity.id);
   };
 
+  const isDisabled = !username.trim() || !selectedCity;
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#1b325e] p-6">
-      <h1 className="text-5xl font-bold mb-8">Velg en by</h1>
-  
-      {loading && <p className="text-lg text-gray-300 animate-pulse">Laster inn bykart...</p>}
-      {error && <p className="text-lg text-red-400">{error}</p>}
-  
-      <div className="flex flex-wrap gap-4 justify-center max-w-2xl">
-        {cities.map((city) => (
-          <button
-            key={city.id}
-            className="px-6 py-3 text-lg rounded-xl font-semibold transition duration-300 bg-white text-black 
-                       border border-gray-300 hover:border-2 hover:border-blue-500 focus:outline-none"
-            onClick={() => handleCitySelect(city)}
-          >
-            {city.name}
-          </button>
+    <div className="flex flex-col items-center w-full mt-10">
+      <h2 className="text-3xl font-bold text-white mb-6">Velg en by</h2>
+
+      {/* City Selection */}
+      <div className="flex flex-wrap gap-8 justify-center">
+        {cityOptions.map((city) => (
+          <div key={city.id} className="flex flex-col items-center">
+            <button
+              onClick={() => handleCitySelect(city)}
+              // Only add a permanent ring if the city is selected
+              className={`
+                w-64 h-64
+                rounded-lg
+                overflow-hidden
+                transition-transform
+                duration-300
+                hover:scale-105
+                focus:outline-none
+                ${
+                  selectedCity?.id === city.id
+                    ? "ring-4 ring-blue-500" // persistent ring
+                    : "" // no ring if not selected
+                }
+              `}
+            >
+              <img
+                src={city.imageUrl}
+                alt={city.name}
+                className="w-full h-full object-cover"
+              />
+            </button>
+            {/* City name below the image */}
+            <span className="text-white mt-2">{city.name}</span>
+          </div>
         ))}
       </div>
-  
-      {selectedCity && (
-        <div className="mt-8 flex flex-col items-center">
-          <h2 className="text-2xl font-semibold mb-4">Du har valgt: <span className="text-white">{selectedCity.name}</span></h2>
-          <input
-            type="text"
-            value={username}
-            placeholder="Skriv inn brukernavn"
-            onChange={(e) => setUsername(e.target.value)}
-            className="px-4 py-3 text-white text-lg rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 mb-4 w-72 text-center"
-          />
-          <button
-            onClick={handleStartGame}
-            className="px-8 py-3 text-lg rounded-xl font-semibold bg-white text-black hover:bg-gray-200 transition duration-300 shadow-md hover:scale-105"
-          >
-            Start spillet
-          </button>
-        </div>
-      )}
+
+      {/* Username + Start Button */}
+      <div className="mt-8 flex flex-col items-center">
+        <input
+          type="text"
+          value={username}
+          placeholder="Skriv inn brukernavn"
+          onChange={(e) => setUsername(e.target.value)}
+          className="px-4 py-2 text-white text-lg rounded-lg 
+                     border border-gray-400 
+                     mb-4 w-72 text-center
+                     focus:outline-none focus:ring-2 focus:ring-gray-300"
+        />
+        <button
+          onClick={handleStartGame}
+          disabled={isDisabled}
+          className={`
+            px-6 py-3 text-lg rounded-xl font-semibold shadow-md 
+            transition duration-300
+            ${
+              isDisabled
+                ? "bg-gray-400 text-gray-800 cursor-not-allowed"
+                : "bg-white text-black hover:bg-gray-200 hover:scale-105"
+            }
+          `}
+        >
+          Start spillet
+        </button>
+      </div>
     </div>
   );
 };
