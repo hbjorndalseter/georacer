@@ -1,17 +1,22 @@
 import { useState, useEffect } from "react";
 import "../styles/ScoreBoard.css"; 
 
-const ScoreBoard = () => {
+const ScoreBoard = ({ onLoaded }) => {
   const [players, setPlayers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch("http://localhost:3000/api/players/")
       .then((res) => res.json())
       .then((data) => {
         setPlayers(data);
+        setIsLoading(false);
+        if (onLoaded) onLoaded();
       })
       .catch((error) => {
         console.error("Error fetching players:", error);
+        setIsLoading(false);
+        if (onLoaded) onLoaded();
       });
   }, []);
 
