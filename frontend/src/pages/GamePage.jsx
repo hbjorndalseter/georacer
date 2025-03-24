@@ -15,7 +15,7 @@ export default function GamePage() {
   const [showModal, setShowModal] = useState(false);
   const [currentScore, setCurrentScore] = useState(0);
 
-  // Overlay state and a flag to show it only on the first load.
+  // Overlay state and flag for first load.
   const [isOverlayActive, setIsOverlayActive] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
@@ -24,9 +24,7 @@ export default function GamePage() {
     fetch(`http://localhost:3000/api/fact-questions/${mapId}`)
       .then((res) => res.json())
       .then((data) => setFactQuestions(data))
-      .catch((error) =>
-        console.error("Error fetching fact questions:", error)
-      );
+      .catch((error) => console.error("Error fetching fact questions:", error));
   }, [mapId]);
 
   // When factQuestions are available, load the first question and its checkpoint node.
@@ -34,7 +32,6 @@ export default function GamePage() {
     if (factQuestions.length > 0) {
       const firstQuestion = factQuestions[0];
       setCurrentQuestion(firstQuestion);
-      // If it's the first load, show the overlay for 3 seconds.
       if (isFirstLoad) {
         setIsOverlayActive(true);
         fetch(`http://localhost:3000/api/roadnet/${mapId}/${firstQuestion.nodeId}`)
@@ -45,10 +42,9 @@ export default function GamePage() {
           );
         setTimeout(() => {
           setIsOverlayActive(false);
-          setIsFirstLoad(false); // Now mark that first load is complete.
+          setIsFirstLoad(false);
         }, 3000);
       } else {
-        // For subsequent loads, simply fetch without overlay.
         fetch(`http://localhost:3000/api/roadnet/${mapId}/${firstQuestion.nodeId}`)
           .then((res) => res.json())
           .then((data) => setCheckpointNode(data))
@@ -78,7 +74,7 @@ export default function GamePage() {
       if (nextQuestionIndex < factQuestions.length) {
         const nextQuestion = factQuestions[nextQuestionIndex];
         setCurrentQuestion(nextQuestion);
-        // For subsequent questions, we no longer show the overlay.
+        // For subsequent questions, do not show the overlay.
         fetch(`http://localhost:3000/api/roadnet/${mapId}/${nextQuestion.nodeId}`)
           .then((res) => res.json())
           .then((data) => setCheckpointNode(data))
@@ -98,7 +94,6 @@ export default function GamePage() {
 
   return (
     <div className="relative w-screen h-screen bg-[#1b325e] flex flex-col justify-around items-center">
-      <h1>GamePage</h1>
       {currentQuestion && (
         <InteractiveMap
           mapId={mapId}
@@ -113,19 +108,18 @@ export default function GamePage() {
           onClose={() => setShowModal(false)}
         />
       )}
-      {isOverlayActive && (
-        <div
-          className="fixed inset-0 flex justify-center items-center bg-[#1b325e] bg-opacity-50"
-          style={{
-            zIndex: 9999,
-            transition: "opacity 0.5s ease",
-            opacity: isOverlayActive ? 1 : 0,
-            pointerEvents: isOverlayActive ? "auto" : "none",
-          }}
-        >
-          <div className="loader text-white text-xl">Loading...</div>
-        </div>
-      )}
+      {/* Always render the overlay; control its opacity with isOverlayActive */}
+      <div
+        className="fixed inset-0 flex justify-center items-center bg-[#1b325e] bg-opacity-50"
+        style={{
+          zIndex: 9999,
+          transition: "opacity 0.5s ease",
+          opacity: isOverlayActive ? 1 : 0,
+          pointerEvents: isOverlayActive ? "auto" : "none",
+        }}
+      >
+        <div className="loader text-white text-xl">Initierer kartet...</div>
+      </div>
     </div>
   );
 }

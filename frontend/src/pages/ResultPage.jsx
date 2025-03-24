@@ -39,7 +39,7 @@ const ResultPage = () => {
             pointerEvents: isLoading ? "auto" : "none",
           }}
         >
-          <div className="loader text-white text-xl">Loading...</div>
+          <div className="loader text-white text-xl">Henter highscorelisten...</div>
         </div>
       )}
     </div>
