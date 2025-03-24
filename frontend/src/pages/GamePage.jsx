@@ -77,7 +77,7 @@ export default function GamePage() {
       } else {
         await updateScore(player, newScore);
         updatePlayerScore(newScore);
-        navigate("/"); // Navigate to the results page if no more questions
+        navigate("/Result"); // Navigate to the results page if no more questions
       }
     } else {
       alert("Incorrect answer. Try again!");
