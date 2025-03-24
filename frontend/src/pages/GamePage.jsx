@@ -2,16 +2,19 @@ import { useState, useEffect } from "react";
 import InteractiveMap from "../components/InteractiveMap";
 import { useNavigate } from "react-router-dom";
 import QuestionModal from "../components/QuestionModal";
+import { usePlayer } from "../context/PlayerContext";
+import { updateScore } from "../utils/updateScore";
 
 export default function GamePage() {
+
+  const { player, updatePlayerScore } = usePlayer();
   const navigate = useNavigate();
-  const mapId = 1; // Temporary mapId
+  const mapId = player?.cityMapId; 
   const [factQuestions, setFactQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [checkpointNode, setCheckpointNode] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [isMapRendered, setIsMapRendered] = useState(false);
+  const [currentScore, setCurrentScore] = useState(0);
 
   // Fetch fact questions on component mount
   useEffect(() => {
@@ -56,13 +59,16 @@ export default function GamePage() {
     setShowModal(true);
   };
 
-  // Handle answer submission.
-  const handleAnswerSubmit = (userAnswer) => {
+  // Handle answer submission in the modal
+  const handleAnswerSubmit = async (userAnswer) => {
     if (
       userAnswer.trim().toLowerCase() ===
       currentQuestion.answer.trim().toLowerCase()
     ) {
-      alert(`Correct! You've earned ${currentQuestion.points} points.`);
+      alert(`Correct! You've earned ${currentQuestion.score} points. Points added to user ${player.name}`);
+      const newScore = currentScore + currentQuestion.score;
+      setCurrentScore(newScore);
+
       const currentIndex = factQuestions.indexOf(currentQuestion);
       const nextQuestionIndex = currentIndex + 1;
       if (nextQuestionIndex < factQuestions.length) {
@@ -83,7 +89,9 @@ export default function GamePage() {
             setIsDataLoaded(true);
           });
       } else {
-        navigate("/"); // Navigate to the results page if no more questions.
+        await updateScore(player, newScore);
+        updatePlayerScore(newScore);
+        navigate("/"); // Navigate to the results page if no more questions
       }
     } else {
       alert("Incorrect answer. Try again!");

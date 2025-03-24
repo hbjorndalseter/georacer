@@ -3,22 +3,22 @@ import prisma from '../db.js';
 
 const router = express.Router();
 
-const getOrCreatePlayer = async (name) => {
-    // Prøv å finne spilleren med gitt navn
+const getOrCreatePlayer = async (name, cityMapId) => {
     let player = await prisma.player.findUnique({
-        where: { name },
+        where: {
+            name_cityMapId: { name, cityMapId },
+        },
     });
 
     let isNewPlayer = false;
 
     if (!player) {
-        // Opprett ny spiller
         player = await prisma.player.create({
-            data: { name, score: 0, cityMapId: 1 },
+            data: { name, score: 0, cityMapId },
         });
         isNewPlayer = true;
     }
-   
+
     return { player, isNewPlayer };
 };
 
@@ -70,18 +70,44 @@ router.delete('/:id', async (req, res) => {
 
 //Login eller lag ny spiller
 router.post('/login', async (req, res) => {
-    const { name } = req.body;
+    const { name, cityMapId } = req.body;
 
-    if (!name) {
-        return res.status(400).json({ error: 'Navn må oppgis' });
+    if (!name || !cityMapId) {
+        return res.status(400).json({ error: 'Navn og cityMapId må oppgis' });
     }
+
     try {
-        const {player, isNewPlayer} = await getOrCreatePlayer(name);
-        res.json({player});
+        const { player, isNewPlayer } = await getOrCreatePlayer(name, cityMapId);
+        res.json({ player });
     } catch (error) {
         console.error("Feil ved opprettelse av spiller:", error);
         res.status(500).json({ error: error.message });
     }
 });
+
+router.post('/update-score', async (req, res) => {
+    const { name, score, cityMapId } = req.body;
+  
+    if (!name || !score || !cityMapId) {
+      return res.status(400).json({ error: 'Navn, score og cityMapId må oppgis' });
+    }
+  
+    try {
+      const player = await prisma.player.update({
+        where: {
+          name_cityMapId: {
+            name,
+            cityMapId: Number(cityMapId),
+          },
+        },
+        data: { score },
+      });
+  
+      res.json(player);
+    } catch (error) {
+      console.error("Feil ved oppdatering av score:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
 
 export default router;
