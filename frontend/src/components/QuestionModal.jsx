@@ -24,11 +24,15 @@ export default function QuestionModal({ task, onSubmit, onClose }) {
     <div
       className={`
         absolute bottom-8 left-1/2 -translate-x-1/2 z-999 w-[360px] p-5
-        rounded-2xl shadow-2xl backdrop-blur-md text-white bg-[#0f172a]/90
-        transition-all duration-500
-        ${feedback === 'correct' ? 'border-4 border-green-400' : ''}
-        ${feedback === 'wrong' ? 'border-4 border-red-500' : ''}
-        ${fadeOut ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
+        rounded-2xl shadow-2xl backdrop-blur-md text-white
+        transition-colors transition-opacity duration-500 ease-in-out
+        ${fadeOut ? 'opacity-0' : 'opacity-100'}
+        ${feedback === 'correct'
+          ? 'bg-green-500/30'
+          : feedback === 'wrong'
+            ? 'bg-red-500/30'
+            : 'bg-[#0f172a]/90'
+        }
       `}
     >
       <h2 className="text-xl font-bold mb-2">🧠 Utfordring!</h2>
@@ -40,6 +44,7 @@ export default function QuestionModal({ task, onSubmit, onClose }) {
           onChange={(e) => setUserAnswer(e.target.value)}
           placeholder="Skriv svaret ditt her..."
           className="flex-1 px-3 py-2 rounded-lg text-white bg-[#1e293b] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          autoFocus
         />
         <button
           type="submit"
