@@ -6,7 +6,7 @@ import carURL from '../assets/redCar.png'
 import 'leaflet/dist/leaflet.css';
 import '../styles/Map.css';
 
-export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached, onMove, questionAnswered }) {
+export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached, onMove, showArrows }) {
 
     const [position, setPosition] = useState([63.4305, 10.3951]); // Temporary start, add loading spinner
     const [currentNode, setCurrentNode] = useState(1); // Start node is always 1
@@ -56,8 +56,8 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
     }, [neighbours])
 
     useEffect(() => {
-        setArrowsVisible(questionAnswered)
-    }, [questionAnswered])
+        setArrowsVisible(showArrows)
+    }, [showArrows])
 
     // Handle arrow click to move to the neighbour node using built-in animation
     function handleArrowClick(neighbour, rot_angle) {

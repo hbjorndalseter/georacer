@@ -11,21 +11,21 @@ export default function GamePage() {
   const { player, updatePlayerScore } = usePlayer();
   const navigate = useNavigate();
   const mapId = player?.cityMapId;
-  const [factQuestions, setFactQuestions] = useState([]);
-  const [currentQuestion, setCurrentQuestion] = useState(null);
-  const [checkpointNode, setCheckpointNode] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+
+  const [factQuestions, setFactQuestions] = useState([]); // All questions in order for the map
+  const [currentQuestion, setCurrentQuestion] = useState(null); // The question that was previously shown to the user or being shown in the modal
+  const [checkpointNode, setCheckpointNode] = useState(null); // Node at where the next checkpoint is
+
   const [currentScore, setCurrentScore] = useState(0);
   const [totalDistanceMoved, setTotalDistanceMoved] = useState(0);
-  const [questionAnswered, setQuestionAnswered] = useState(true);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [isHighscore, setIsHighscore] = useState(false);
 
+  const [showChallenge, setShowChallenge] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [isFinished, setIsFinished] = useState(false);
 
-  // Fetch fact questions
+  // Fetch fact questions when the page loads
   useEffect(() => {
     fetch(`http://localhost:3000/api/fact-questions/${mapId}`)
       .then((res) => res.json())
@@ -33,24 +33,16 @@ export default function GamePage() {
       .catch((error) => console.error("Error fetching fact questions:", error));
   }, [mapId]);
 
-  // When factQuestions are available, load the first question and its checkpoint node. 
-  // Overlay "Initierer kartet"
+  // When factQuestions are available, load the first question's checkpoint node. 
   useEffect(() => {
     if (factQuestions.length > 0) {
       const firstQuestion = factQuestions[0];
-      setCurrentQuestion(firstQuestion);
-      if (isFirstLoad) {
-        setIsLoading(true);
-        fetchNodeToQuestion(mapId, firstQuestion.nodeId)
-        setTimeout(() => {
-          setIsLoading(false);
-          setIsFirstLoad(false);
-        }, 3000);
-      } else {
-        fetchNodeToQuestion(mapId, firstQuestion.nodeId)
-      }
+      fetchNodeToQuestion(mapId, firstQuestion.nodeId);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
     }
-  }, [factQuestions, mapId, isFirstLoad]);
+  }, [factQuestions]);
 
   const fetchNodeToQuestion = (mapId, nodeId) => {
     fetch(`http://localhost:3000/api/roadnet/${mapId}/${nodeId}`)
@@ -61,9 +53,46 @@ export default function GamePage() {
       );
   }
 
+  // When you reach the next checkpoint
   const handleCheckpointReached = () => {
-    setShowModal(true);
-    setQuestionAnswered(false);
+    const currentIndex = factQuestions.indexOf(currentQuestion); // magically returns -1 if currentQuestion = null
+    const nextQuestionIndex = currentIndex + 1;
+
+    // Make sure we show the right question (index of previous question + 1)
+    if (nextQuestionIndex < factQuestions.length) {
+      const nextQuestion = factQuestions[nextQuestionIndex];
+      setCurrentQuestion(nextQuestion);
+      setShowChallenge(true);
+    } else {
+      setShowChallenge(false);
+    }
+  };
+
+  // When you answer the question
+  const handleAnswerSubmit = async (userAnswer) => {
+    let isCorrect = false;
+
+    // If correct - update score
+    if (userAnswer.trim().toLowerCase() === currentQuestion.answer.trim().toLowerCase()) {
+      isCorrect = true;
+      const newScore = currentScore + currentQuestion.score;
+      setCurrentScore(newScore);
+      setCorrectAnswers(correctAnswers + 1);
+    }
+
+    // Needs the next checkpoint node, but dont update the question itself yet (happens when you reach the next checkpoint)
+    const currentIndex = factQuestions.indexOf(currentQuestion);
+    const nextQuestionIndex = currentIndex + 1;
+
+    if (nextQuestionIndex < factQuestions.length) {
+      const nextQuestion = factQuestions[nextQuestionIndex];
+      fetchNodeToQuestion(mapId, nextQuestion.nodeId);
+    } else {
+      const highscoreStatus = await updateScore(player, currentScore);
+      setIsHighscore(highscoreStatus);
+      setIsFinished(true);
+    }
+    return isCorrect;
   };
 
   const onMove = (distance) => {
@@ -71,38 +100,7 @@ export default function GamePage() {
     console.log("Total distance moved:", totalDistanceMoved + distance);
   };
 
-  const handleAnswerSubmit = async (userAnswer) => {
-    if (
-      userAnswer.trim().toLowerCase() ===
-      currentQuestion.answer.trim().toLowerCase()
-    ) {
-      alert(
-        `Correct! You've earned ${currentQuestion.score} points. Points added to user ${player.name}`
-      );
-      const newScore = currentScore + currentQuestion.score;
-      setCurrentScore(newScore);
-      const newCorrectAnswers = correctAnswers + 1;
-      setCorrectAnswers(newCorrectAnswers);
-      const currentIndex = factQuestions.indexOf(currentQuestion);
-      const nextQuestionIndex = currentIndex + 1;
-      if (nextQuestionIndex < factQuestions.length) {
-        const nextQuestion = factQuestions[nextQuestionIndex];
-        setCurrentQuestion(nextQuestion);
-        fetchNodeToQuestion(mapId, nextQuestion.nodeId);
-      } else {
-        const highscoreStatus = await updateScore(player, newScore);
-        //updatePlayerScore(newScore);
-        setIsHighscore(highscoreStatus);
-        setIsFinished(true);
-      }
-    } else {
-      alert("Incorrect answer. Try again!");
-    }
-    setShowModal(false);
-    setQuestionAnswered(true);
-  };
-
-  //Knapplogikk for FinishedOverlayet:
+  // Logic for FinishedOverlay:
   const handleHomeClick = () => {
     navigate("/");
   };
@@ -117,21 +115,21 @@ export default function GamePage() {
 
   return (
     <div className="relative w-screen h-screen bg-[#1b325e] flex flex-col justify-around items-center">
-      <div style={{ position: 'relative', height: '80vh', width: '50%' }}>
-        {currentQuestion && (
-          <InteractiveMap
-            mapId={mapId}
-            checkpointNode={checkpointNode}
-            onCheckpointReached={handleCheckpointReached}
-            onMove={onMove}
-            questionAnswered={questionAnswered}
-          />
-        )}
-        {showModal && currentQuestion && (
+      <div style={{ position: 'relative', height: '100vh', width: '100vw' }}>
+        <InteractiveMap
+          mapId={mapId}
+          checkpointNode={checkpointNode}
+          onCheckpointReached={handleCheckpointReached}
+          onMove={onMove}
+          showArrows={!showChallenge}
+        />
+        {showChallenge && (
           <QuestionModal
             task={currentQuestion}
             onSubmit={handleAnswerSubmit}
-            onClose={() => setShowModal(false)}
+            onClose={() => {
+              setShowChallenge(false);
+            }}
           />
         )}
       </div>
@@ -139,10 +137,10 @@ export default function GamePage() {
       {isLoading && <LoadingOverlay loadingText="Initierer kart..." />}
       {isFinished && <GameResultOverlay
         currentPlayer={player}
-        distance = {totalDistanceMoved}
-        correctAnswers = {correctAnswers}
-        currentScore = {currentScore}
-        isHighscore = {isHighscore}
+        distance={totalDistanceMoved}
+        correctAnswers={correctAnswers}
+        currentScore={currentScore}
+        isHighscore={isHighscore}
         onHomeClick={handleHomeClick}
         onRetryClick={handleRetryClick}
         onHighscoreClick={handleHighscoreClick}
