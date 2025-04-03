@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import ScoreBoard from "../components/ScoreBoard.jsx";
 import LoadingOverlay from "../components/LoadingScreen.jsx";
+import NavigateHome from "../components/navigateHomeButton.jsx";
 
 const ResultPage = () => {
   // isLoading controls the overlay opacity.
@@ -22,10 +23,6 @@ const ResultPage = () => {
     }
   }, [isLoading]);
 
-  const handleHomeClick = () => {
-    navigate("/");
-  };
-
   return (
     <div className="relative w-screen h-screen bg-gradient-to-br from-[#1b325e] via-[#3a538c] to-[#1b325e] flex flex-col items-center pt-10">
       <h1 className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-lime-400 to-green-500 drop-shadow-md animate-fade-in mt-2 mb-4 tracking-wide">
@@ -36,12 +33,7 @@ const ResultPage = () => {
       </div>
       
       {showOverlay && <LoadingOverlay loadingText="Henter resultater..."/>}
-      <button
-        onClick={handleHomeClick}
-        className="mt-8 px-6 py-3 bg-white text-[#1b325e] font-semibold rounded-xl shadow-md transition hover:bg-gray-100 hover:scale-105"
-      >
-        Startsiden
-      </button>
+      <NavigateHome />
     </div>
   );
 };
