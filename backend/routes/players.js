@@ -110,4 +110,26 @@ router.post('/update-score', async (req, res) => {
     }
   });
 
+  router.get("/top-players-by-map/:cityMapId", async (req, res) => {
+    const { cityMapId } = req.params;
+  
+    const idNum = Number(cityMapId);
+    if (isNaN(idNum)) {
+      return res.status(400).json({ error: "Ugyldig cityMapId" });
+    }
+  
+    try {
+      const players = await prisma.player.findMany({
+        where: { cityMapId: idNum },
+        orderBy: { score: "desc" },
+        //take: 10,
+      });
+  
+      res.json(players);
+    } catch (error) {
+      console.error("Feil ved henting av toppspillere:", error);
+      res.status(500).json({ error: "Noe gikk galt ved henting av spillere" });
+    }
+  });
+
 export default router;

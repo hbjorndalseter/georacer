@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
 import "../styles/ScoreBoard.css"; 
+import { usePlayer } from "../context/PlayerContext";
 
 const ScoreBoard = ({ onLoaded }) => {
   const [players, setPlayers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { player } = usePlayer();
+  const [mapName, setMapName] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/players/")
+    if (!player?.cityMapId) return;
+
+    fetch(`${import.meta.env.VITE_API_URL}/api/players/top-players-by-map/${player.cityMapId}`)
       .then((res) => res.json())
       .then((data) => {
         setPlayers(data);
@@ -20,13 +25,29 @@ const ScoreBoard = ({ onLoaded }) => {
       });
   }, []);
 
-  const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
-  const topPlayers = sortedPlayers.slice(0, 10);
+  useEffect(() =>  {
+    if (!player.cityMapId) return;
+
+    fetch(`${import.meta.env.VITE_API_URL}/api/city-maps/${player.cityMapId}`)
+    .then((res) => res.json())
+    .then((data) => {
+      setMapName(data)
+    })
+    .catch((error) => {
+      console.error("Error fetching map name:", error)
+    })
+  }, [!isLoading])
+
+  const sortedPlayers = [...players];
+  //const topPlayers = sortedPlayers.slice(0, 10);
 
   return (
     <div className="scoreboard-container">
+      <p className="text-white text-5xl font-bold mt-[2%] justify-center items-center flex "> 
+        {mapName}
+      </p>
       <div className="scoreboard">
-        {topPlayers.map((player) => (
+        {sortedPlayers.map((player) => (
           <div className="scoreboard-row" key={player.id}>
             <div className="scoreboard-player">{player.name}</div>
             <div className="scoreboard-score">{player.score}</div>
