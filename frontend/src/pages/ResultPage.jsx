@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import ScoreBoard from "../components/ScoreBoard.jsx";
+import LoadingOverlay from "../components/LoadingScreen.jsx";
 
 const ResultPage = () => {
   // isLoading controls the overlay opacity.
@@ -29,19 +30,8 @@ const ResultPage = () => {
       <div className="flex flex-col items-center justify-baseline">
         <ScoreBoard onLoaded={handleScoreBoardLoaded} />
       </div>
-      {showOverlay && (
-        <div
-          className="fixed inset-0 flex justify-center items-center bg-[#1b325e] bg-opacity-50"
-          style={{
-            zIndex: 9999,
-            transition: "opacity 0.5s ease",
-            opacity: isLoading ? 1 : 0,
-            pointerEvents: isLoading ? "auto" : "none",
-          }}
-        >
-          <div className="loader text-white text-xl">Henter resultatslisten...</div>
-        </div>
-      )}
+      
+      {showOverlay && <LoadingOverlay loadingText="Henter resultater..."/>}
     </div>
   );
 };

@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import QuestionModal from "../components/QuestionModal";
 import { usePlayer } from "../context/PlayerContext";
 import { updateScore } from "../utils/updateScore";
+import LoadingOverlay from "../components/LoadingScreen";
+import GameResultOverlay from "../components/GameResultOverlay";
 
 export default function GamePage() {
   const { player, updatePlayerScore } = usePlayer();
@@ -16,9 +18,9 @@ export default function GamePage() {
   const [currentScore, setCurrentScore] = useState(0);
   const [totalDistanceMoved, setTotalDistanceMoved] = useState(0);
 
-  // Overlay state and flag for first load.
-  const [isOverlayActive, setIsOverlayActive] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const[isFinished, setIsFinished] = useState(false);
 
   // Fetch fact questions.
   useEffect(() => {
@@ -34,7 +36,7 @@ export default function GamePage() {
       const firstQuestion = factQuestions[0];
       setCurrentQuestion(firstQuestion);
       if (isFirstLoad) {
-        setIsOverlayActive(true);
+        setIsLoading(true);
         fetch(`http://localhost:3000/api/roadnet/${mapId}/${firstQuestion.nodeId}`)
           .then((res) => res.json())
           .then((data) => setCheckpointNode(data))
@@ -42,7 +44,7 @@ export default function GamePage() {
             console.error("Error fetching checkpoint node:", error)
           );
         setTimeout(() => {
-          setIsOverlayActive(false);
+          setIsLoading(false);
           setIsFirstLoad(false);
         }, 3000);
       } else {
@@ -90,7 +92,8 @@ export default function GamePage() {
       } else {
         await updateScore(player, newScore);
         updatePlayerScore(newScore);
-        navigate("/Result");
+        //navigate("/Result");
+        setIsFinished(true)
       }
     } else {
       alert("Incorrect answer. Try again!");
@@ -115,18 +118,9 @@ export default function GamePage() {
           onClose={() => setShowModal(false)}
         />
       )}
-      {/* Always render the overlay; control its opacity with isOverlayActive */}
-      <div
-        className="fixed inset-0 flex justify-center items-center bg-[#1b325e] bg-opacity-50"
-        style={{
-          zIndex: 9999,
-          transition: "opacity 0.5s ease",
-          opacity: isOverlayActive ? 1 : 0,
-          pointerEvents: isOverlayActive ? "auto" : "none",
-        }}
-      >
-        <div className="loader text-white text-xl">Initierer kartet...</div>
-      </div>
+    
+      {isLoading && <LoadingOverlay loadingText="Initierer kart..."/>}
+      {isFinished && <GameResultOverlay currentPlayer = {player}/>}
     </div>
   );
 }
