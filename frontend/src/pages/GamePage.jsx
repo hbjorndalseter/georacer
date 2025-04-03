@@ -19,6 +19,7 @@ export default function GamePage() {
   const [totalDistanceMoved, setTotalDistanceMoved] = useState(0);
   const [questionAnswered, setQuestionAnswered] = useState(true);
   const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [isHighscore, setIsHighscore] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
@@ -80,40 +81,37 @@ export default function GamePage() {
       );
       const newScore = currentScore + currentQuestion.score;
       setCurrentScore(newScore);
-      const newCorrectAnswers = correctAnswers + 1
+      const newCorrectAnswers = correctAnswers + 1;
       setCorrectAnswers(newCorrectAnswers);
       const currentIndex = factQuestions.indexOf(currentQuestion);
       const nextQuestionIndex = currentIndex + 1;
       if (nextQuestionIndex < factQuestions.length) {
         const nextQuestion = factQuestions[nextQuestionIndex];
         setCurrentQuestion(nextQuestion);
-        fetchNodeToQuestion(mapId, nextQuestion.nodeId)
+        fetchNodeToQuestion(mapId, nextQuestion.nodeId);
       } else {
-        await updateScore(player, newScore);
-        updatePlayerScore(newScore);
-        setIsFinished(true)
+        const highscoreStatus = await updateScore(player, newScore);
+        //updatePlayerScore(newScore);
+        setIsHighscore(highscoreStatus);
+        setIsFinished(true);
       }
     } else {
       alert("Incorrect answer. Try again!");
     }
     setShowModal(false);
     setQuestionAnswered(true);
-
   };
 
   //Knapplogikk for FinishedOverlayet:
   const handleHomeClick = () => {
-    // Logikk for å gå til hjem-siden
-    console.log("Naviger til Hjem");
+    navigate("/");
   };
 
   const handleRetryClick = () => {
-    // Logikk for å starte spillet på nytt
-    console.log("Start spillet på nytt");
+    navigate("/Game")
   };
 
   const handleHighscoreClick = () => {
-    // Logikk for å vise highscore-listen
     navigate("/Result");
   };
 
@@ -143,7 +141,8 @@ export default function GamePage() {
         currentPlayer={player}
         distance = {totalDistanceMoved}
         correctAnswers = {correctAnswers}
-        score = {currentScore}
+        currentScore = {currentScore}
+        isHighscore = {isHighscore}
         onHomeClick={handleHomeClick}
         onRetryClick={handleRetryClick}
         onHighscoreClick={handleHighscoreClick}
