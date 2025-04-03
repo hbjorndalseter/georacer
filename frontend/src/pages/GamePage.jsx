@@ -18,6 +18,7 @@ export default function GamePage() {
   const [currentScore, setCurrentScore] = useState(0);
   const [totalDistanceMoved, setTotalDistanceMoved] = useState(0);
   const [questionAnswered, setQuestionAnswered] = useState(true);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
@@ -79,6 +80,8 @@ export default function GamePage() {
       );
       const newScore = currentScore + currentQuestion.score;
       setCurrentScore(newScore);
+      const newCorrectAnswers = correctAnswers + 1
+      setCorrectAnswers(newCorrectAnswers);
       const currentIndex = factQuestions.indexOf(currentQuestion);
       const nextQuestionIndex = currentIndex + 1;
       if (nextQuestionIndex < factQuestions.length) {
@@ -88,7 +91,6 @@ export default function GamePage() {
       } else {
         await updateScore(player, newScore);
         updatePlayerScore(newScore);
-        //navigate("/Result");
         setIsFinished(true)
       }
     } else {
@@ -97,6 +99,22 @@ export default function GamePage() {
     setShowModal(false);
     setQuestionAnswered(true);
 
+  };
+
+  //Knapplogikk for FinishedOverlayet:
+  const handleHomeClick = () => {
+    // Logikk for å gå til hjem-siden
+    console.log("Naviger til Hjem");
+  };
+
+  const handleRetryClick = () => {
+    // Logikk for å starte spillet på nytt
+    console.log("Start spillet på nytt");
+  };
+
+  const handleHighscoreClick = () => {
+    // Logikk for å vise highscore-listen
+    navigate("/Result");
   };
 
   return (
@@ -121,7 +139,15 @@ export default function GamePage() {
       </div>
 
       {isLoading && <LoadingOverlay loadingText="Initierer kart..." />}
-      {isFinished && <GameResultOverlay currentPlayer={player} />}
+      {isFinished && <GameResultOverlay
+        currentPlayer={player}
+        distance = {totalDistanceMoved}
+        correctAnswers = {correctAnswers}
+        score = {currentScore}
+        onHomeClick={handleHomeClick}
+        onRetryClick={handleRetryClick}
+        onHighscoreClick={handleHighscoreClick}
+      />}
     </div>
   );
 }
