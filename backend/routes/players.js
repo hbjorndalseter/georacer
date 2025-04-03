@@ -130,7 +130,7 @@ router.post('/update-score', async (req, res) => {
       const players = await prisma.player.findMany({
         where: { cityMapId: idNum },
         orderBy: { score: "desc" },
-        //take: 10,
+        take: 5,
       });
   
       res.json(players);
