@@ -15,6 +15,7 @@ export default function GamePage() {
   const [showModal, setShowModal] = useState(false);
   const [currentScore, setCurrentScore] = useState(0);
   const [totalDistanceMoved, setTotalDistanceMoved] = useState(0);
+  console.log(player);
 
   // Overlay state and flag for first load.
   const [isOverlayActive, setIsOverlayActive] = useState(true);

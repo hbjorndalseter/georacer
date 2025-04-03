@@ -42,17 +42,28 @@ const ScoreBoard = ({ onLoaded }) => {
   //const topPlayers = sortedPlayers.slice(0, 10);
 
   return (
-    <div className="scoreboard-container">
-      <p className="text-white text-5xl font-bold mt-[2%] justify-center items-center flex "> 
+    <div className="w-full max-w-md px-6 py-6 bg-white/10 backdrop-blur-md rounded-2xl shadow-xl mt-4">
+      <p className="text-white text-4xl font-bold text-center mb-6">
         {mapName}
       </p>
-      <div className="scoreboard">
-        {sortedPlayers.map((player) => (
-          <div className="scoreboard-row" key={player.id}>
-            <div className="scoreboard-player">{player.name}</div>
-            <div className="scoreboard-score">{player.score}</div>
-          </div>
-        ))}
+  
+      <div className="space-y-4">
+        {sortedPlayers.map((player, index) => {
+          const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : null;
+  
+          return (
+            <div
+              key={player.id}
+              className="flex justify-between items-center px-4 py-2 bg-white/20 rounded-xl text-white font-medium hover:bg-white/30 transition"
+            >
+              <span className="capitalize">
+                {medal && <span className="mr-2">{medal}</span>}
+                {index + 1}. {player.name}
+              </span>
+              <span className="font-semibold">{player.score}</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
