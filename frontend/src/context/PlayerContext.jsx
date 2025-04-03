@@ -1,15 +1,18 @@
 import { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import UsernameConflictModal from "../components/UsernameConflictModal.jsx";
 
 const PlayerContext = createContext(null);
 
+// ✅ Sørg for at denne er tilgjengelig
 export const usePlayer = () => useContext(PlayerContext);
 
 export const PlayerProvider = ({ children }) => {
   const [player, setPlayer] = useState(null);
+  const [pendingPlayer, setPendingPlayer] = useState(null);
+  const [showConflictModal, setShowConflictModal] = useState(false);
   const navigate = useNavigate();
 
-  // Henter ut eller oppretter spilleren i databasen
   const loginPlayer = async (username, cityMapId) => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/players/login`, {
@@ -18,12 +21,21 @@ export const PlayerProvider = ({ children }) => {
         body: JSON.stringify({ name: username, cityMapId }),
       });
   
-      if (!res.ok) {
-        throw new Error("Feil ved innlogging eller opprettelse av spiller.");
-      }
+      if (!res.ok) throw new Error("Feil ved login");
   
       const data = await res.json();
-      setPlayer(data.player); // Lagre spilleren i context
+  
+      console.log("Login response:", data); // 👈 Her logger vi alt
+  
+      if (data.alreadyExists) {
+        console.log("Brukernavn finnes allerede – viser modal");
+        setPendingPlayer(data.player);
+        setShowConflictModal(true);
+        return;
+      }
+  
+      console.log("Ny spiller, går videre til spillet");
+      setPlayer(data.player);
       navigate("/Game");
     } catch (error) {
       console.error("Feil ved login:", error);
@@ -34,9 +46,28 @@ export const PlayerProvider = ({ children }) => {
     setPlayer((prev) => ({ ...prev, score: newScore }));
   };
 
+  const handleProceed = () => {
+    setPlayer(pendingPlayer);
+    setPendingPlayer(null);
+    setShowConflictModal(false);
+    navigate("/Game");
+  };
+
+  const handleCancel = () => {
+    setPendingPlayer(null);
+    setShowConflictModal(false);
+  };
+
   return (
     <PlayerContext.Provider value={{ player, loginPlayer, updatePlayerScore }}>
       {children}
+      {showConflictModal && (
+        <UsernameConflictModal
+          username={pendingPlayer?.name}
+          onProceed={handleProceed}
+          onCancel={handleCancel}
+        />
+      )}
     </PlayerContext.Provider>
   );
 };

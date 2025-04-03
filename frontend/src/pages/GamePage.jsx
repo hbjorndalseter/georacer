@@ -16,6 +16,9 @@ export default function GamePage() {
   const [checkpointNode, setCheckpointNode] = useState(null);
   const [currentScore, setCurrentScore] = useState(0);
   const [totalDistanceMoved, setTotalDistanceMoved] = useState(0);
+  const [questionAnswered, setQuestionAnswered] = useState(true);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [isHighscore, setIsHighscore] = useState(false);
 
   const [showChallenge, setShowChallenge] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -73,21 +76,35 @@ export default function GamePage() {
       isCorrect = true
       const newScore = currentScore + currentQuestion.score;
       setCurrentScore(newScore);
-    }
-    const currentIndex = factQuestions.indexOf(currentQuestion);
-    const nextQuestionIndex = currentIndex + 1;
-    if (nextQuestionIndex < factQuestions.length) {
-      const nextQuestion = factQuestions[nextQuestionIndex];
-      setCurrentQuestion(nextQuestion);
-      fetchNodeToQuestion(mapId, nextQuestion.nodeId)
-    } else {
-      await updateScore(player, newScore);
-      updatePlayerScore(newScore);
-      //navigate("/Result");
-      setIsFinished(true)
-    }
-    return isCorrect;
-};
+      const newCorrectAnswers = correctAnswers + 1;
+      setCorrectAnswers(newCorrectAnswers);
+      const currentIndex = factQuestions.indexOf(currentQuestion);
+      const nextQuestionIndex = currentIndex + 1;
+      if (nextQuestionIndex < factQuestions.length) {
+        const nextQuestion = factQuestions[nextQuestionIndex];
+        setCurrentQuestion(nextQuestion);
+        fetchNodeToQuestion(mapId, nextQuestion.nodeId);
+      } else {
+        const highscoreStatus = await updateScore(player, newScore);
+        //updatePlayerScore(newScore);
+        setIsHighscore(highscoreStatus);
+        setIsFinished(true);
+      }
+      return isCorrect;
+  };
+
+  //Knapplogikk for FinishedOverlayet:
+  const handleHomeClick = () => {
+    navigate("/");
+  };
+
+  const handleRetryClick = () => {
+    navigate("/Game")
+  };
+
+  const handleHighscoreClick = () => {
+    navigate("/Result");
+  };
 
 return (
   <div className="relative w-screen h-screen bg-[#1b325e] flex flex-col justify-around items-center">
@@ -112,8 +129,17 @@ return (
       )}
     </div>
 
-    {isLoading && <LoadingOverlay loadingText="Initierer kart..." />}
-    {isFinished && <GameResultOverlay currentPlayer={player} />}
-  </div>
-);
+      {isLoading && <LoadingOverlay loadingText="Initierer kart..." />}
+      {isFinished && <GameResultOverlay
+        currentPlayer={player}
+        distance = {totalDistanceMoved}
+        correctAnswers = {correctAnswers}
+        currentScore = {currentScore}
+        isHighscore = {isHighscore}
+        onHomeClick={handleHomeClick}
+        onRetryClick={handleRetryClick}
+        onHighscoreClick={handleHighscoreClick}
+      />}
+    </div>
+  );
 }
