@@ -21,7 +21,7 @@ export default function GamePage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const[isFinished, setIsFinished] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
 
   // Fetch fact questions
   useEffect(() => {
@@ -101,24 +101,27 @@ export default function GamePage() {
 
   return (
     <div className="relative w-screen h-screen bg-[#1b325e] flex flex-col justify-around items-center">
-      {currentQuestion && (
-        <InteractiveMap
-          mapId={mapId}
-          checkpointNode={checkpointNode}
-          onCheckpointReached={handleCheckpointReached}
-          onMove={onMove}
-        />
-      )}
-      {showModal && currentQuestion && (
-        <QuestionModal
-          task={currentQuestion}
-          onSubmit={handleAnswerSubmit}
-          onClose={() => setShowModal(false)}
-        />
-      )}
-    
-      {isLoading && <LoadingOverlay loadingText="Initierer kart..."/>}
-      {isFinished && <GameResultOverlay currentPlayer = {player}/>}
+      <div style={{ position: 'relative', height: '80vh', width: '50%' }}>
+        {currentQuestion && (
+          <InteractiveMap
+            mapId={mapId}
+            checkpointNode={checkpointNode}
+            onCheckpointReached={handleCheckpointReached}
+            onMove={onMove}
+            questionAnswered={questionAnswered}
+          />
+        )}
+        {showModal && currentQuestion && (
+          <QuestionModal
+            task={currentQuestion}
+            onSubmit={handleAnswerSubmit}
+            onClose={() => setShowModal(false)}
+          />
+        )}
+      </div>
+
+      {isLoading && <LoadingOverlay loadingText="Initierer kart..." />}
+      {isFinished && <GameResultOverlay currentPlayer={player} />}
     </div>
   );
 }

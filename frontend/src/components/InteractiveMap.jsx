@@ -77,7 +77,7 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
     }
 
     return (
-        <div id='container' style={{ position: 'relative', height: '100%', width: '100%' }}>
+        <div id='container'>
             <MapContainer
                 center={position}
                 zoom={18}
