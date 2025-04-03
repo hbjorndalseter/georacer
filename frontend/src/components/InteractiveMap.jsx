@@ -6,7 +6,7 @@ import carURL from '../assets/redCar.png'
 import 'leaflet/dist/leaflet.css';
 import '../styles/Map.css';
 
-export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached, onMove }) {
+export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached, onMove, questionAnswered }) {
 
     const [position, setPosition] = useState([63.4305, 10.3951]); // Temporary start, add loading spinner
     const [currentNode, setCurrentNode] = useState(1); // Start node is always 1
@@ -41,12 +41,23 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
             .then(response => response.json())
             .then(data => {
                 setNeighbours(data);
-                setArrowsVisible(true);
             });
+    }, [currentNode]);
+
+    // Logic to hide the arrows when answering question
+    useEffect(() => {
         if (checkpointNode && currentNode === checkpointNode.id) {
+            setArrowsVisible(false);
             onCheckpointReached();
         }
-    }, [currentNode]);
+        else {
+            setArrowsVisible(true);
+        }
+    }, [neighbours])
+
+    useEffect(() => {
+        setArrowsVisible(questionAnswered)
+    }, [questionAnswered])
 
     // Handle arrow click to move to the neighbour node using built-in animation
     function handleArrowClick(neighbour, rot_angle) {
@@ -66,7 +77,7 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
     }
 
     return (
-        <div id='container' style={{ position: 'relative', height: '80vh', width: '50%' }}>
+        <div id='container'>
             <MapContainer
                 center={position}
                 zoom={18}

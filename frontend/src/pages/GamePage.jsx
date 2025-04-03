@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import QuestionModal from "../components/QuestionModal";
 import { usePlayer } from "../context/PlayerContext";
 import { updateScore } from "../utils/updateScore";
+import LoadingOverlay from "../components/LoadingScreen";
+import GameResultOverlay from "../components/GameResultOverlay";
 
 export default function GamePage() {
   const { player, updatePlayerScore } = usePlayer();
@@ -15,13 +17,13 @@ export default function GamePage() {
   const [showModal, setShowModal] = useState(false);
   const [currentScore, setCurrentScore] = useState(0);
   const [totalDistanceMoved, setTotalDistanceMoved] = useState(0);
-  console.log(player);
+  const [questionAnswered, setQuestionAnswered] = useState(true);
 
-  // Overlay state and flag for first load.
-  const [isOverlayActive, setIsOverlayActive] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [isFinished, setIsFinished] = useState(false);
 
-  // Fetch fact questions.
+  // Fetch fact questions
   useEffect(() => {
     fetch(`http://localhost:3000/api/fact-questions/${mapId}`)
       .then((res) => res.json())
@@ -29,41 +31,42 @@ export default function GamePage() {
       .catch((error) => console.error("Error fetching fact questions:", error));
   }, [mapId]);
 
-  // When factQuestions are available, load the first question and its checkpoint node.
+  // When factQuestions are available, load the first question and its checkpoint node. 
+  // Overlay "Initierer kartet"
   useEffect(() => {
     if (factQuestions.length > 0) {
       const firstQuestion = factQuestions[0];
       setCurrentQuestion(firstQuestion);
       if (isFirstLoad) {
-        setIsOverlayActive(true);
-        fetch(`http://localhost:3000/api/roadnet/${mapId}/${firstQuestion.nodeId}`)
-          .then((res) => res.json())
-          .then((data) => setCheckpointNode(data))
-          .catch((error) =>
-            console.error("Error fetching checkpoint node:", error)
-          );
+        setIsLoading(true);
+        fetchNodeToQuestion(mapId, firstQuestion.nodeId)
         setTimeout(() => {
-          setIsOverlayActive(false);
+          setIsLoading(false);
           setIsFirstLoad(false);
         }, 3000);
       } else {
-        fetch(`http://localhost:3000/api/roadnet/${mapId}/${firstQuestion.nodeId}`)
-          .then((res) => res.json())
-          .then((data) => setCheckpointNode(data))
-          .catch((error) =>
-            console.error("Error fetching checkpoint node:", error)
-          );
+        fetchNodeToQuestion(mapId, firstQuestion.nodeId)
       }
     }
   }, [factQuestions, mapId, isFirstLoad]);
 
+  const fetchNodeToQuestion = (mapId, nodeId) => {
+    fetch(`http://localhost:3000/api/roadnet/${mapId}/${nodeId}`)
+      .then((res) => res.json())
+      .then((data) => setCheckpointNode(data))
+      .catch((error) =>
+        console.error("Error fetching node corresponding to fact-question:", error)
+      );
+  }
+
   const handleCheckpointReached = () => {
     setShowModal(true);
+    setQuestionAnswered(false);
   };
 
   const onMove = (distance) => {
     setTotalDistanceMoved(totalDistanceMoved + distance);
-    console.log("Total distance moved:", totalDistanceMoved+distance);
+    console.log("Total distance moved:", totalDistanceMoved + distance);
   };
 
   const handleAnswerSubmit = async (userAnswer) => {
@@ -81,53 +84,44 @@ export default function GamePage() {
       if (nextQuestionIndex < factQuestions.length) {
         const nextQuestion = factQuestions[nextQuestionIndex];
         setCurrentQuestion(nextQuestion);
-        // For subsequent questions, do not show the overlay.
-        fetch(`http://localhost:3000/api/roadnet/${mapId}/${nextQuestion.nodeId}`)
-          .then((res) => res.json())
-          .then((data) => setCheckpointNode(data))
-          .catch((error) =>
-            console.error("Error fetching checkpoint node:", error)
-          );
+        fetchNodeToQuestion(mapId, nextQuestion.nodeId)
       } else {
         await updateScore(player, newScore);
         updatePlayerScore(newScore);
-        navigate("/Result");
+        //navigate("/Result");
+        setIsFinished(true)
       }
     } else {
       alert("Incorrect answer. Try again!");
     }
     setShowModal(false);
+    setQuestionAnswered(true);
+
   };
 
   return (
     <div className="relative w-screen h-screen bg-[#1b325e] flex flex-col justify-around items-center">
-      {currentQuestion && (
-        <InteractiveMap
-          mapId={mapId}
-          checkpointNode={checkpointNode}
-          onCheckpointReached={handleCheckpointReached}
-          onMove={onMove}
-        />
-      )}
-      {showModal && currentQuestion && (
-        <QuestionModal
-          task={currentQuestion}
-          onSubmit={handleAnswerSubmit}
-          onClose={() => setShowModal(false)}
-        />
-      )}
-      {/* Always render the overlay; control its opacity with isOverlayActive */}
-      <div
-        className="fixed inset-0 flex justify-center items-center bg-[#1b325e] bg-opacity-50"
-        style={{
-          zIndex: 9999,
-          transition: "opacity 0.5s ease",
-          opacity: isOverlayActive ? 1 : 0,
-          pointerEvents: isOverlayActive ? "auto" : "none",
-        }}
-      >
-        <div className="loader text-white text-xl">Initierer kartet...</div>
+      <div style={{ position: 'relative', height: '80vh', width: '50%' }}>
+        {currentQuestion && (
+          <InteractiveMap
+            mapId={mapId}
+            checkpointNode={checkpointNode}
+            onCheckpointReached={handleCheckpointReached}
+            onMove={onMove}
+            questionAnswered={questionAnswered}
+          />
+        )}
+        {showModal && currentQuestion && (
+          <QuestionModal
+            task={currentQuestion}
+            onSubmit={handleAnswerSubmit}
+            onClose={() => setShowModal(false)}
+          />
+        )}
       </div>
+
+      {isLoading && <LoadingOverlay loadingText="Initierer kart..." />}
+      {isFinished && <GameResultOverlay currentPlayer={player} />}
     </div>
   );
 }
