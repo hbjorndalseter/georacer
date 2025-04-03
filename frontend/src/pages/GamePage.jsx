@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import QuestionModal from "../components/QuestionModal";
 import { usePlayer } from "../context/PlayerContext";
 import { updateScore } from "../utils/updateScore";
+import LoadingOverlay from "../components/LoadingScreen";
+import GameResultOverlay from "../components/GameResultOverlay";
 
 export default function GamePage() {
   const { player, updatePlayerScore } = usePlayer();
@@ -17,9 +19,9 @@ export default function GamePage() {
   const [totalDistanceMoved, setTotalDistanceMoved] = useState(0);
   const [questionAnswered, setQuestionAnswered] = useState(true);
 
-  // Overlay state and flag for first load
-  const [isOverlayActive, setIsOverlayActive] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const[isFinished, setIsFinished] = useState(false);
 
   // Fetch fact questions
   useEffect(() => {
@@ -36,10 +38,10 @@ export default function GamePage() {
       const firstQuestion = factQuestions[0];
       setCurrentQuestion(firstQuestion);
       if (isFirstLoad) {
-        setIsOverlayActive(true);
+        setIsLoading(true);
         fetchNodeToQuestion(mapId, firstQuestion.nodeId)
         setTimeout(() => {
-          setIsOverlayActive(false);
+          setIsLoading(false);
           setIsFirstLoad(false);
         }, 3000);
       } else {
@@ -86,7 +88,8 @@ export default function GamePage() {
       } else {
         await updateScore(player, newScore);
         updatePlayerScore(newScore);
-        navigate("/Result");
+        //navigate("/Result");
+        setIsFinished(true)
       }
     } else {
       alert("Incorrect answer. Try again!");
@@ -98,38 +101,24 @@ export default function GamePage() {
 
   return (
     <div className="relative w-screen h-screen bg-[#1b325e] flex flex-col justify-around items-center">
-      <div className="relative w-[80vh] h-[50%]">
-        {currentQuestion && (
-          <InteractiveMap
-            mapId={mapId}
-            checkpointNode={checkpointNode}
-            onCheckpointReached={handleCheckpointReached}
-            onMove={onMove}
-            questionAnswered={questionAnswered}
-          />
-        )}
-        {/* Position modal within the map space even though not a child */}
-        {showModal && currentQuestion && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-50">
-            <QuestionModal
-              task={currentQuestion}
-              onSubmit={handleAnswerSubmit}
-            />
-          </div>
-        )}
-      </div>
-      {/* Always render the overlay; control its opacity with isOverlayActive */}
-      <div
-        className="fixed inset-0 flex justify-center items-center bg-[#1b325e] bg-opacity-50"
-        style={{
-          zIndex: 9999,
-          transition: "opacity 0.5s ease",
-          opacity: isOverlayActive ? 1 : 0,
-          pointerEvents: isOverlayActive ? "auto" : "none",
-        }}
-      >
-        <div className="loader text-white text-xl">Initierer kartet...</div>
-      </div>
+      {currentQuestion && (
+        <InteractiveMap
+          mapId={mapId}
+          checkpointNode={checkpointNode}
+          onCheckpointReached={handleCheckpointReached}
+          onMove={onMove}
+        />
+      )}
+      {showModal && currentQuestion && (
+        <QuestionModal
+          task={currentQuestion}
+          onSubmit={handleAnswerSubmit}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+    
+      {isLoading && <LoadingOverlay loadingText="Initierer kart..."/>}
+      {isFinished && <GameResultOverlay currentPlayer = {player}/>}
     </div>
   );
 }
