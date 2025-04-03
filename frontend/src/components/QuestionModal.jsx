@@ -9,7 +9,6 @@ export default function QuestionModal({ task, onSubmit, onClose }) {
     e.preventDefault();
     const isCorrect = await onSubmit(userAnswer);
     setFeedback(isCorrect ? 'correct' : 'wrong');
-    setUserAnswer('');
     setTimeout(() => {
       setFadeOut(true);
     }, 500); // wait before fading out
@@ -25,8 +24,7 @@ export default function QuestionModal({ task, onSubmit, onClose }) {
       className={`
         absolute bottom-8 left-1/2 -translate-x-1/2 z-999 w-[360px] p-5
         rounded-2xl shadow-2xl backdrop-blur-md text-white
-        transition-colors transition-opacity duration-500 ease-in-out
-        ${fadeOut ? 'opacity-0' : 'opacity-100'}
+        transition-colors duration-500 ease-in-out
         ${feedback === 'correct'
           ? 'bg-green-500/30'
           : feedback === 'wrong'

@@ -26,11 +26,20 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
             });
     }, [mapId]);
 
+    // Make it feel realistic...
+    const calculatePanDuration = (distance) => {
+        const scaled = Math.sqrt(distance) / 20;
+        return Math.min(Math.max(scaled, 0.3), 1.8);
+    };
+
     // Component to center the map on the car using animated panning
     function CenterMap() {
         const map = useMap();
         useEffect(() => {
-            map.panTo(position, { animate: true, duration: distanceToNextNode / 250 });
+            map.panTo(position, {
+                animate: true,
+                duration: calculatePanDuration(distanceToNextNode),
+            });
         }, [position, map]);
         return null;
     }
@@ -64,16 +73,14 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
         setArrowsVisible(false);
 
         setCarRotation(rot_angle + 90);
-    
+
         const distance = calculateDistance(neighbour.lat, neighbour.lng, position[0], position[1]);
         onMove(distance); // Update the total distance moved
         setDistanceToNextNode(distance);
         setPosition([neighbour.lat, neighbour.lng]);
 
         // Update the current node after the animation completes
-        setTimeout(() => {
-            setCurrentNode(neighbour.id);
-        }, 4 * distanceToNextNode);
+        setCurrentNode(neighbour.id);
     }
 
     return (
@@ -88,13 +95,12 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
                 doubleClickZoom={false}
             >
                 <TileLayer
-                    url="https://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=6e87f65590d044e99e27369fd99280da"
-                    attribution='Maps &copy; <a href="https://www.thunderforest.com/">Thunderforest</a>,
-                                 Data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                    attribution="&copy; OpenStreetMap & CartoDB"
                 />
                 <CenterMap />
                 {checkpointNode && (
-                    <Marker position={[checkpointNode.lat, checkpointNode.lng]}/>
+                    <Marker position={[checkpointNode.lat, checkpointNode.lng]} />
                 )}
             </MapContainer>
 
