@@ -26,7 +26,7 @@ const ResultPage = () => {
     <div className="relative w-screen h-screen bg-gradient-to-br from-[#1b325e] via-[#3a538c] to-[#1b325e] flex flex-col items-center pt-10">
       <h1 className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-lime-400 to-green-500 drop-shadow-md animate-fade-in mt-2 mb-4 tracking-wide">
         RESULTATSLISTE
-      </p>
+      </h1>
       <div className="flex flex-col items-center justify-baseline">
         <ScoreBoard onLoaded={handleScoreBoardLoaded} />
       </div>
