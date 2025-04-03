@@ -96,8 +96,7 @@ export default function GamePage() {
   };
 
   const onMove = (distance) => {
-    setTotalDistanceMoved(totalDistanceMoved + distance);
-    console.log("Total distance moved:", totalDistanceMoved + distance);
+    setTotalDistanceMoved((prev) => prev + distance);
   };
 
   // Logic for FinishedOverlay:
