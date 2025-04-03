@@ -42,7 +42,7 @@ const ScoreBoard = ({ onLoaded }) => {
   //const topPlayers = sortedPlayers.slice(0, 10);
 
   return (
-    <div className="w-full max-w-md px-6 py-6 bg-white/10 backdrop-blur-md rounded-2xl shadow-xl mt-4">
+    <div className="w-full max-w-2xl px-6 py-6 bg-white/10 backdrop-blur-md rounded-2xl shadow-xl mt-4">
       <p className="text-white text-4xl font-bold text-center mb-6">
         {mapName}
       </p>
