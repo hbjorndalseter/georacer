@@ -42,8 +42,8 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
     const a = Math.sin(dLat / 2) ** 2 +
-              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-              Math.sin(dLon / 2) ** 2;
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) ** 2;
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // Distance in meters
@@ -67,6 +67,11 @@ async function dijkstraShortestPath(mapId, startNodeId, endNodeId) {
     const nodes = await fetch(`http://localhost:3000/api/roadnet/${mapId}/nodes`)
         .then(res => res.json());
 
+    // Fetch all edges (neighbour-matrix)
+    const edgeMap = await fetch(`http://localhost:3000/api/roadnet/${mapId}/edges`)
+        .then((res) => res.json());
+
+
     for (const node of nodes) {
         nodeMap.set(node.id, node);
     }
@@ -85,9 +90,7 @@ async function dijkstraShortestPath(mapId, startNodeId, endNodeId) {
 
     // Dijkstra's algorithm main loop
     while (!minHeap.isEmpty()) {
-        console.log(distancesMap);
         const { id: currentId, distance: currentDistance } = minHeap.pop();
-        // if (visitedNodes.has(currentId)) continue;
         visitedNodes.add(currentId);
 
         // Check if we reached the end node
@@ -95,16 +98,14 @@ async function dijkstraShortestPath(mapId, startNodeId, endNodeId) {
             return currentDistance;
         }
 
-        // Fetch neighbours of the current node
-        const neighbours = await fetch(`http://localhost:3000/api/roadnet/${mapId}/${currentId}/neighbours`)
-            .then(res => res.json());
+        // Find neighbours of the current node
+        const neighbours = edgeMap[currentId] || [];
+        const currentNode = nodeMap.get(currentId);
 
 
         for (const neighbour of neighbours) {
             const neighbourId = neighbour.id;
             if (visitedNodes.has(neighbourId)) continue;
-
-            const currentNode = nodeMap.get(currentId);
 
             const distanceToNeighbour = currentDistance + calculateDistance(
                 neighbour.lat, neighbour.lng,

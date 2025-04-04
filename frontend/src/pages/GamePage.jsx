@@ -47,8 +47,9 @@ export default function GamePage() {
 
   // When factQuestions are available, load the first question's checkpoint node and calculate the totalShortestDistance
   useEffect(() => {
-    calculateShortestPath();
+    
     if (factQuestions.length > 0) {
+      calculateShortestPath();
       const firstQuestion = factQuestions[0];
       fetchNodeToQuestion(mapId, firstQuestion.nodeId);
       setTimeout(() => {
@@ -74,7 +75,6 @@ export default function GamePage() {
       sum += distance
     }
     setShortestPathDistance(sum);
-    console.log("Shortest path distance:", sum);
   }
 
   const fetchNodeToQuestion = (mapId, nodeId) => {
@@ -121,6 +121,7 @@ export default function GamePage() {
       const nextQuestion = factQuestions[nextQuestionIndex];
       fetchNodeToQuestion(mapId, nextQuestion.nodeId);
     } else {
+      
       const highscoreStatus = await updateScore(player, currentScore);
       setIsHighscore(highscoreStatus);
       setIsFinished(true);
