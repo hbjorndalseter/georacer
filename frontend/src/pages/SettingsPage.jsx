@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import DeletePlayersModal from '../components/DeletePlayersModal.jsx'; 
+import DeletePlayersModal from '../components/DeletePlayersModal.jsx';
+import NavigateHome from '../components/NavigateHomeButton.jsx'; 
 
 export default function SettingsPage() {
   const [adminVerified, setAdminVerified] = useState(false);
@@ -83,7 +84,8 @@ export default function SettingsPage() {
           </button>
         </div>
       ) : (
-        <div className="w-full max-w-md space-y-4 px-6">
+        <>
+        <div className="w-full max-w-md space-y-4 px-6 justify-center">
           <select
             className="w-full px-4 py-2 rounded-xl bg-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-300"
             value={selectedCityMapId || ''}
@@ -103,6 +105,10 @@ export default function SettingsPage() {
             Slett spillere for valgt kart
           </button>
         </div>
+        <div className='mb-0'>
+            <NavigateHome />
+        </div>
+        </>
       )}
 
       {status && (
