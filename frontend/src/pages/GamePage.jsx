@@ -7,6 +7,7 @@ import { updateScore } from "../utils/updateScore";
 import LoadingOverlay from "../components/LoadingScreen";
 import GameResultOverlay from "../components/GameResultOverlay";
 import GameHUD from '../components/GameHUD';
+import { dijkstraShortestPath } from "../utils/algorithms";
 
 export default function GamePage() {
   const { player, updatePlayerScore } = usePlayer();
@@ -27,20 +28,26 @@ export default function GamePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFinished, setIsFinished] = useState(false);
 
+  const [shortestPathDistance, setShortestPathDistance] = useState()
+
   // Fetch fact questions and map name when the page loads
   useEffect(() => {
+
     fetch(`http://localhost:3000/api/fact-questions/${mapId}`)
       .then((res) => res.json())
       .then((data) => setFactQuestions(data))
       .catch((error) => console.error("Error fetching fact questions:", error));
+
     fetch(`http://localhost:3000/api/city-maps/${mapId}`)
     .then((res) => res.json())
     .then((data) => setMapName(data))
     .catch((error) => console.error("Error fetching map name:", error));
+
   }, [mapId]);
 
-  // When factQuestions are available, load the first question's checkpoint node. 
+  // When factQuestions are available, load the first question's checkpoint node and calculate the totalShortestDistance
   useEffect(() => {
+    calculateShortestPath();
     if (factQuestions.length > 0) {
       const firstQuestion = factQuestions[0];
       fetchNodeToQuestion(mapId, firstQuestion.nodeId);
@@ -49,6 +56,26 @@ export default function GamePage() {
       }, 2000);
     }
   }, [factQuestions]);
+
+   const calculateShortestPath = async () => {
+    let sum = 0
+    let nodeId1;
+    console.log(factQuestions.length)
+    for (let i = -1; i < factQuestions.length - 1; i++) {
+      if (i == -1) {
+        nodeId1 = 1 // First node always id = 1
+      }
+      else {
+        nodeId1 = factQuestions[i].nodeId
+      }
+      const nodeId2 = factQuestions[i + 1]?.nodeId
+      const distance = await dijkstraShortestPath(mapId, nodeId1, nodeId2);
+      console.log("Kjøring: ", i)
+      sum += distance
+    }
+    setShortestPathDistance(sum);
+    console.log("Shortest path distance:", sum);
+  }
 
   const fetchNodeToQuestion = (mapId, nodeId) => {
     fetch(`http://localhost:3000/api/roadnet/${mapId}/${nodeId}`)
