@@ -3,6 +3,7 @@ import car2 from "../assets/police.png";
 import car3 from "../assets/lightning.png";
 import car4 from "../assets/f1.png";
 import car5 from "../assets/taxi.png";
+import car6 from "../assets/volvo.png";
 
 
 const carOptions = [
@@ -11,6 +12,7 @@ const carOptions = [
   { id: "car3", name: "Lightning mcQueen", imageUrl: car3 },
   { id: "car4", name: "F1", imageUrl: car4 },
   { id: "car5", name: "Taxi", imageUrl: car5 },
+  { id: "car6", name: "Terjes Volvo", imageUrl: car6 },
 ];
 
 const ChooseCarModal = ({ selectedCar, setSelectedCar, onClose }) => {

@@ -20,6 +20,7 @@ import car2 from "../assets/police.png";
 import car3 from "../assets/lightning.png";
 import car4 from "../assets/f1.png";
 import car5 from "../assets/taxi.png";
+import car6 from "../assets/volvo.png";
 
 export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached, onMove, showArrows }) {
 
