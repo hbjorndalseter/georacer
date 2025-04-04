@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import ResultPage from './pages/ResultPage';
 import StartPage from './pages/StartPage';
 import GamePage from './pages/GamePage';
+import SettingsPage from './pages/SettingsPage';
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
             <Route path="/" element={<StartPage />} />
             <Route path="/Game" element={<GamePage />} />
             <Route path="/Result" element={<ResultPage />} />
+            <Route path="/Settings" element={<SettingsPage />} />
           </Routes>
         </div>
       </PlayerProvider>
