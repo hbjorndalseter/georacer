@@ -6,11 +6,13 @@ import { usePlayer } from "../context/PlayerContext";
 import { updateScore } from "../utils/updateScore";
 import LoadingOverlay from "../components/LoadingScreen";
 import GameResultOverlay from "../components/GameResultOverlay";
+import GameHUD from '../components/GameHUD';
 
 export default function GamePage() {
   const { player, updatePlayerScore } = usePlayer();
   const navigate = useNavigate();
   const mapId = player?.cityMapId;
+  const [mapName, setMapName] = useState();
 
   const [factQuestions, setFactQuestions] = useState([]); // All questions in order for the map
   const [currentQuestion, setCurrentQuestion] = useState(null); // The question that was previously shown to the user or being shown in the modal
@@ -25,12 +27,16 @@ export default function GamePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFinished, setIsFinished] = useState(false);
 
-  // Fetch fact questions when the page loads
+  // Fetch fact questions and map name when the page loads
   useEffect(() => {
     fetch(`http://localhost:3000/api/fact-questions/${mapId}`)
       .then((res) => res.json())
       .then((data) => setFactQuestions(data))
       .catch((error) => console.error("Error fetching fact questions:", error));
+    fetch(`http://localhost:3000/api/city-maps/${mapId}`)
+    .then((res) => res.json())
+    .then((data) => setMapName(data))
+    .catch((error) => console.error("Error fetching map name:", error));
   }, [mapId]);
 
   // When factQuestions are available, load the first question's checkpoint node. 
@@ -122,6 +128,14 @@ export default function GamePage() {
           onMove={onMove}
           showArrows={!showChallenge}
         />
+        
+        <GameHUD
+          playerName={player?.name}
+          totalDistanceMoved={totalDistanceMoved}
+          correctAnswers={correctAnswers}
+          mapName={mapName}
+        />
+
         {showChallenge && (
           <QuestionModal
             task={currentQuestion}

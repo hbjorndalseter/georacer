@@ -1,10 +1,19 @@
 import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet';
-import { calculatePositionOfArrow, calculateDistance } from '../utils/algorithms.js';
+import { calculatePositionOfArrow, calculateDistance, calculatePanDuration } from '../utils/algorithms.js';
 import Arrow from './Arrow.jsx';
 import carURL from '../assets/redCar.png'
 import 'leaflet/dist/leaflet.css';
 import '../styles/Map.css';
+
+import L from "leaflet";
+const glowingQuestionIcon = L.divIcon({
+    className: "", // <-- leave this blank
+    html: `<div class="custom-marker">❓</div>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
+  });
+
 
 export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached, onMove, showArrows }) {
 
@@ -25,12 +34,6 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
                 console.error("Error fetching start node:", error);
             });
     }, [mapId]);
-
-    // Make it feel realistic...
-    const calculatePanDuration = (distance) => {
-        const scaled = Math.sqrt(distance) / 20;
-        return Math.min(Math.max(scaled, 0.3), 1.8);
-    };
 
     // Component to center the map on the car using animated panning
     function CenterMap() {
@@ -100,7 +103,7 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
                 />
                 <CenterMap />
                 {checkpointNode && (
-                    <Marker position={[checkpointNode.lat, checkpointNode.lng]} />
+                    <Marker position={[checkpointNode.lat, checkpointNode.lng]} icon={glowingQuestionIcon} />
                 )}
             </MapContainer>
 
