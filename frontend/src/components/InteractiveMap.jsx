@@ -91,9 +91,6 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
         if (delta < -180) delta += 360;
       
         const final = carRotation + delta;
-        console.log(final)
-        
-        console.log("Prev:", prev, "Target:", target);
         setCarRotation(final);
 
         const distance = calculateDistance(neighbour.lat, neighbour.lng, position[0], position[1]);
