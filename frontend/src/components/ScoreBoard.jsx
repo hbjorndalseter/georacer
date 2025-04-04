@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "../styles/ScoreBoard.css"; 
+import "../styles/ScoreBoard.css";
 import { usePlayer } from "../context/PlayerContext";
 
 const ScoreBoard = ({ onLoaded }) => {
@@ -25,17 +25,17 @@ const ScoreBoard = ({ onLoaded }) => {
       });
   }, []);
 
-  useEffect(() =>  {
+  useEffect(() => {
     if (!player.cityMapId) return;
 
     fetch(`${import.meta.env.VITE_API_URL}/api/city-maps/${player.cityMapId}`)
-    .then((res) => res.json())
-    .then((data) => {
-      setMapName(data)
-    })
-    .catch((error) => {
-      console.error("Error fetching map name:", error)
-    })
+      .then((res) => res.json())
+      .then((data) => {
+        setMapName(data)
+      })
+      .catch((error) => {
+        console.error("Error fetching map name:", error)
+      })
   }, [!isLoading])
 
   const sortedPlayers = [...players];
@@ -46,19 +46,23 @@ const ScoreBoard = ({ onLoaded }) => {
       <p className="text-white text-4xl font-bold text-center mb-6">
         {mapName}
       </p>
-  
+
       <div className="space-y-4">
         {sortedPlayers.map((player, index) => {
           const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : null;
-  
+
           return (
             <div
               key={player.id}
               className="flex justify-between items-center px-4 py-2 bg-white/20 rounded-xl text-white font-medium hover:bg-white/30 transition"
             >
               <span className="capitalize">
-                {medal && <span className="mr-2">{medal}</span>}
-                {index + 1}. {player.name}
+                {medal ? (
+                  <span className="mr-2 text-xl">{medal}</span>
+                ) : (
+                  <span className="mr-2">{index + 1}.</span>
+                )}
+                {player.name}
               </span>
               <span className="font-semibold">{player.score}</span>
             </div>

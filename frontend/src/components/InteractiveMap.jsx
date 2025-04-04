@@ -21,7 +21,6 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
     const [neighbours, setNeighbours] = useState([]);
     const [arrowsVisible, setArrowsVisible] = useState(true);
     const [carRotation, setCarRotation] = useState(0);
-    const rotationRef = useRef(0);
     const [distanceToNextNode, setDistanceToNextNode] = useState(0);
     const { player } = usePlayer();
 

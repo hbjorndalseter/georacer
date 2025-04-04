@@ -11,7 +11,6 @@ import { dijkstraShortestPath, calculateScoreByDistance } from "../utils/algorit
 
 export default function GamePage() {
   const { player, updatePlayerScore } = usePlayer();
-  const navigate = useNavigate();
   const mapId = player?.cityMapId;
   const [mapName, setMapName] = useState();
 
@@ -25,8 +24,10 @@ export default function GamePage() {
   const [isHighscore, setIsHighscore] = useState(false);
 
   const [showChallenge, setShowChallenge] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [showArrows, setShowArrows] = useState(true)
   const [isFinished, setIsFinished] = useState(false);
+  const [showGameResults, setShowGameResults] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [shortestPathDistance, setShortestPathDistance] = useState()
 
@@ -39,15 +40,15 @@ export default function GamePage() {
       .catch((error) => console.error("Error fetching fact questions:", error));
 
     fetch(`http://localhost:3000/api/city-maps/${mapId}`)
-    .then((res) => res.json())
-    .then((data) => setMapName(data))
-    .catch((error) => console.error("Error fetching map name:", error));
+      .then((res) => res.json())
+      .then((data) => setMapName(data))
+      .catch((error) => console.error("Error fetching map name:", error));
 
   }, [mapId]);
 
   // When factQuestions are available, load the first question's checkpoint node and calculate the totalShortestDistance
   useEffect(() => {
-    
+
     if (factQuestions.length > 0) {
       calculateShortestPath();
       const firstQuestion = factQuestions[0];
@@ -58,7 +59,7 @@ export default function GamePage() {
     }
   }, [factQuestions]);
 
-   const calculateShortestPath = async () => {
+  const calculateShortestPath = async () => {
     let sum = 0
     let nodeId1;
     console.log(factQuestions.length)
@@ -96,18 +97,21 @@ export default function GamePage() {
       const nextQuestion = factQuestions[nextQuestionIndex];
       setCurrentQuestion(nextQuestion);
       setShowChallenge(true);
+      setShowArrows(false)
     } else {
-      setShowChallenge(false);
+      setShowChallenge(false)
     }
   };
 
   // When you answer the question
-  const handleAnswerSubmit = async (isCorrect) => {
+  const handleAnswerSubmit = (isCorrect) => {
+
+    let score = currentScore;
 
     // If correct - update score
     if (isCorrect) {
-      const newScore = currentScore + currentQuestion.score;
-      setCurrentScore(newScore);
+      score += currentQuestion.score;
+      setCurrentScore(score);
       setCorrectAnswers(correctAnswers + 1);
     }
 
@@ -116,37 +120,29 @@ export default function GamePage() {
     const nextQuestionIndex = currentIndex + 1;
 
     if (nextQuestionIndex < factQuestions.length) {
+      setShowArrows(true)
       const nextQuestion = factQuestions[nextQuestionIndex];
       fetchNodeToQuestion(mapId, nextQuestion.nodeId);
     } else { 
-      // Score evaluation
-      const scoreByDistance = calculateScoreByDistance(totalDistanceMoved, shortestPathDistance)
-      console.log(scoreByDistance)
-
-      const highscoreStatus = await updateScore(player, currentScore+scoreByDistance);
-
-      setIsHighscore(highscoreStatus);
-      setTimeout(() => {
-        setIsFinished(true);
-      }, 1500); // same as question timeout
+      // The game is finishing here, after last question is answered
+      setShowArrows(false);
+      setTimeout(() => finishGame(score), 1500);
     }
   };
 
+  const finishGame = async (score) => {
+    const scoreByDistance = Math.round(calculateScoreByDistance(totalDistanceMoved, shortestPathDistance));
+    console.log(scoreByDistance);
+    const  finalScore = score + scoreByDistance
+
+    const isHigh = await updateScore(player, currentScore + scoreByDistance);
+    setCurrentScore(finalScore)
+    setIsHighscore(isHigh);
+    setShowGameResults(true)
+  }
+
   const onMove = (distance) => {
     setTotalDistanceMoved((prev) => prev + distance);
-  };
-
-  // Logic for FinishedOverlay:
-  const handleHomeClick = () => {
-    navigate("/");
-  };
-
-  const handleRetryClick = () => {
-    navigate("/Game")
-  };
-
-  const handleHighscoreClick = () => {
-    navigate("/Result");
   };
 
   return (
@@ -157,9 +153,9 @@ export default function GamePage() {
           checkpointNode={checkpointNode}
           onCheckpointReached={handleCheckpointReached}
           onMove={onMove}
-          showArrows={!showChallenge}
+          showArrows={showArrows}
         />
-        
+
         <GameHUD
           playerName={player?.name}
           totalDistanceMoved={totalDistanceMoved}
@@ -179,15 +175,12 @@ export default function GamePage() {
       </div>
 
       {isLoading && <LoadingOverlay loadingText="Initierer kart..." />}
-      {isFinished && <GameResultOverlay
+      {showGameResults && <GameResultOverlay
         currentPlayer={player}
         distance={totalDistanceMoved}
         correctAnswers={correctAnswers}
         currentScore={currentScore}
         isHighscore={isHighscore}
-        onHomeClick={handleHomeClick}
-        onRetryClick={handleRetryClick}
-        onHighscoreClick={handleHighscoreClick}
       />}
     </div>
   );
