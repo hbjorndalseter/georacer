@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import ScoreBoard from "../components/ScoreBoard.jsx";
 import LoadingOverlay from "../components/LoadingScreen.jsx";
-import NavigateHome from "../components/navigateHomeButton.jsx";
+import NavigateHome from "../components/NavigateHomeButton.jsx";
 
 const ResultPage = () => {
   // isLoading controls the overlay opacity.
