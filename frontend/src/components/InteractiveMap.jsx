@@ -14,14 +14,6 @@ const glowingQuestionIcon = L.divIcon({
     iconAnchor: [15, 15],
   });
 
-
-import car1 from "../assets/RedCar.png";
-import car2 from "../assets/police.png";
-import car3 from "../assets/lightning.png";
-import car4 from "../assets/f1.png";
-import car5 from "../assets/taxi.png";
-import car6 from "../assets/volvo.png";
-
 export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached, onMove, showArrows }) {
 
     const [position, setPosition] = useState([63.4305, 10.3951]); // Temporary start, add loading spinner
