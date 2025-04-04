@@ -11,7 +11,7 @@ export default function NavigateHome() {
     return (
         <button
         onClick={handleHomeClick}
-        className="mt-8 px-6 py-3 bg-white text-[#1b325e] font-semibold rounded-xl shadow-md transition hover:bg-gray-100 hover:scale-105"
+        className="mt-8 px-6 py-3 bg-white text-[#1b325e] font-semibold rounded-xl shadow-md transition hover:bg-gray-100 hover:scale-105 flex justify-center"
       >
         Startsiden
       </button>
