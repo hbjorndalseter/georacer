@@ -9,23 +9,12 @@
   z-index: 1000;
 }
 
-.arrowSprite {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 38.5px;
-  height: 12.5px;
-  z-index: 1001;
-  cursor: pointer;
-  transform-origin: top left;
-  transition: 0.3s ease;
-}
-
 #container {
   height: 100%;
   width: 100%;
 }
 
+/* Pulsating animation for popup */
 .custom-marker {
   font-size: 24px;
   background: white;
@@ -54,4 +43,40 @@
     box-shadow: 0 0 8px rgba(234, 179, 8, 0.4);
     transform: scale(1);
   }
+}
+
+/* Arrow CSS animation */
+.arrowWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1001;
+}
+
+.arrowSprite {
+  width: 38.5px;
+  height: 12.5px;
+  cursor: pointer;
+  transform-origin: left center;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.arrowSprite:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+@keyframes arrowGrowIn {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+.arrow-grow {
+  animation: arrowGrowIn 0.150s ease-out;
 }
