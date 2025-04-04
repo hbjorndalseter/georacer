@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:cityMapId", async (req, res) => {
-    const cityMapId = Number(req.params.cityMapId); // 🔥 viktig linje!
+    const cityMapId = Number(req.params.cityMapId); 
   
     if (isNaN(cityMapId)) {
       return res.status(400).json({ error: "cityMapId må være et tall" });
@@ -22,14 +22,14 @@ router.get("/:cityMapId", async (req, res) => {
   
     try {
       const cityMap = await prisma.cityMap.findUnique({
-        where: { id: cityMapId }, // nå et tall ✅
+        where: { id: cityMapId }, 
       });
   
       if (!cityMap) {
         return res.status(404).json({ error: "Fant ikke kart" });
       }
   
-      res.json(cityMap.name); // eller hele objektet hvis du ønsker det
+      res.json(cityMap.name);
     } catch (error) {
       console.error("Feil ved henting av bynavn:", error);
       res.status(500).json({ error: "Noe gikk galt" });

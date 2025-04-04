@@ -49,6 +49,12 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c; // Distance in meters
 }
 
+// Make movement feel realistic
+const calculatePanDuration = (distance) => {
+    const scaled = Math.sqrt(distance) / 20;
+    return Math.min(Math.max(scaled, 0.3), 1.8);
+};
+
 async function dijkstraShortestPath(mapId, startNodeId, endNodeId) {
     const minHeap = new Heap((a, b) => a.distance - b.distance);
 
@@ -117,4 +123,4 @@ async function dijkstraShortestPath(mapId, startNodeId, endNodeId) {
 }
 
 
-export { calculatePositionOfArrow, calculateDistance, dijkstraShortestPath };
+export { calculatePositionOfArrow, calculateDistance, calculatePanDuration, dijkstraShortestPath };
