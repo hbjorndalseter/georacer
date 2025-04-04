@@ -7,7 +7,7 @@ import { updateScore } from "../utils/updateScore";
 import LoadingOverlay from "../components/LoadingScreen";
 import GameResultOverlay from "../components/GameResultOverlay";
 import GameHUD from '../components/GameHUD';
-import { dijkstraShortestPath } from "../utils/algorithms";
+import { dijkstraShortestPath, calculateScoreByDistance } from "../utils/algorithms";
 
 export default function GamePage() {
   const { player, updatePlayerScore } = usePlayer();
@@ -102,12 +102,10 @@ export default function GamePage() {
   };
 
   // When you answer the question
-  const handleAnswerSubmit = async (userAnswer) => {
-    let isCorrect = false;
+  const handleAnswerSubmit = async (isCorrect) => {
 
     // If correct - update score
-    if (userAnswer.trim().toLowerCase() === currentQuestion.answer.trim().toLowerCase()) {
-      isCorrect = true;
+    if (isCorrect) {
       const newScore = currentScore + currentQuestion.score;
       setCurrentScore(newScore);
       setCorrectAnswers(correctAnswers + 1);
@@ -120,13 +118,18 @@ export default function GamePage() {
     if (nextQuestionIndex < factQuestions.length) {
       const nextQuestion = factQuestions[nextQuestionIndex];
       fetchNodeToQuestion(mapId, nextQuestion.nodeId);
-    } else {
-      
-      const highscoreStatus = await updateScore(player, currentScore);
+    } else { 
+      // Score evaluation
+      const scoreByDistance = calculateScoreByDistance(totalDistanceMoved, shortestPathDistance)
+      console.log(scoreByDistance)
+
+      const highscoreStatus = await updateScore(player, currentScore+scoreByDistance);
+
       setIsHighscore(highscoreStatus);
-      setIsFinished(true);
+      setTimeout(() => {
+        setIsFinished(true);
+      }, 1500); // same as question timeout
     }
-    return isCorrect;
   };
 
   const onMove = (distance) => {

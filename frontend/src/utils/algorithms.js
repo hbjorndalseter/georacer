@@ -123,5 +123,12 @@ async function dijkstraShortestPath(mapId, startNodeId, endNodeId) {
     return Infinity; // No path found
 }
 
+// Calculate score based on distance compared to the shortest path
+const calculateScoreByDistance = (distance, shortestPathDistance) => {
+    const k = 1
+    const score = 1000 * Math.exp(-k * (distance / shortestPathDistance - 1))
+    return score
+};
 
-export { calculatePositionOfArrow, calculateDistance, calculatePanDuration, dijkstraShortestPath };
+
+export { calculatePositionOfArrow, calculateDistance, calculatePanDuration, dijkstraShortestPath, calculateScoreByDistance };
