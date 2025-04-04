@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet';
 import { calculatePositionOfArrow, calculateDistance, calculatePanDuration } from '../utils/algorithms.js';
 import Arrow from './Arrow.jsx';
@@ -12,7 +12,7 @@ const glowingQuestionIcon = L.divIcon({
     html: `<div class="custom-marker">❓</div>`,
     iconSize: [30, 30],
     iconAnchor: [15, 15],
-  });
+});
 
 export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached, onMove, showArrows }) {
 
@@ -21,6 +21,7 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
     const [neighbours, setNeighbours] = useState([]);
     const [arrowsVisible, setArrowsVisible] = useState(true);
     const [carRotation, setCarRotation] = useState(0);
+    const rotationRef = useRef(0);
     const [distanceToNextNode, setDistanceToNextNode] = useState(0);
     const { player } = usePlayer();
 
@@ -71,11 +72,29 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
         setArrowsVisible(showArrows)
     }, [showArrows])
 
+    // Angle normalization, always positive between 0 and 360
+    function normalize(deg) {
+        return (deg + 360) % 360;
+    }
+
     // Handle arrow click to move to the neighbour node using built-in animation
-    function handleArrowClick(neighbour, rot_angle) {
+    function handleArrowClick(neighbour, rawRotation) {
         setArrowsVisible(false);
 
-        setCarRotation(rot_angle + 90);
+        const offset = 90;
+        const prev = normalize(carRotation);
+        const target = normalize(rawRotation + offset);
+      
+        let delta = target - prev;
+      
+        if (delta > 180) delta -= 360;
+        if (delta < -180) delta += 360;
+      
+        const final = carRotation + delta;
+        console.log(final)
+        
+        console.log("Prev:", prev, "Target:", target);
+        setCarRotation(final);
 
         const distance = calculateDistance(neighbour.lat, neighbour.lng, position[0], position[1]);
         onMove(distance); // Update the total distance moved
@@ -111,7 +130,7 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
                 src={player?.car?.imageUrl}
                 className="carSprite"
                 style={{
-                transform: `translate(-50%, -50%) rotate(${carRotation}deg)`
+                    transform: `translate(-50%, -50%) rotate(${carRotation}deg)`
                 }}
             />
 
