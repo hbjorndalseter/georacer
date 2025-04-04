@@ -11,6 +11,8 @@ import factQuestionRouter from './routes/fact-questions.js';
 import riddleQuestionRouter from './routes/riddle-questions.js';
 import roadnetRouter from './routes/roadnet.js';
 import cityMapRouter from './routes/city-maps.js';
+import authRouter from './routes/auth.js';
+import adminRouter from './routes/admin.js'
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -24,6 +26,8 @@ app.use('/api/fact-questions', factQuestionRouter);
 app.use('/api/riddle-questions', riddleQuestionRouter);
 app.use('/api/roadnet', roadnetRouter);
 app.use('/api/city-maps', cityMapRouter);
+app.use('/api/auth', authRouter)
+app.use('/api/admin', adminRouter);
 
 app.get('/', (req, res) => {
     res.send({msg: 'Backend fungerer!'});
