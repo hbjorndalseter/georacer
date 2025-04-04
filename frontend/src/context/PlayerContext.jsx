@@ -13,7 +13,7 @@ export const PlayerProvider = ({ children }) => {
   const [showConflictModal, setShowConflictModal] = useState(false);
   const navigate = useNavigate();
 
-  const loginPlayer = async (username, cityMapId) => {
+  const loginPlayer = async (username, cityMapId, car) => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/players/login`, {
         method: "POST",
@@ -30,12 +30,14 @@ export const PlayerProvider = ({ children }) => {
       if (data.alreadyExists) {
         console.log("Brukernavn finnes allerede – viser modal");
         setPendingPlayer(data.player);
+        setPendingPlayer({ ...data.player, car });
         setShowConflictModal(true);
         return;
       }
   
       console.log("Ny spiller, går videre til spillet");
       setPlayer(data.player);
+      setPlayer({ ...data.player, car });
       navigate("/Game");
     } catch (error) {
       console.error("Feil ved login:", error);
@@ -47,7 +49,7 @@ export const PlayerProvider = ({ children }) => {
   };
 
   const handleProceed = () => {
-    setPlayer(pendingPlayer);
+    setPlayer({ ...pendingPlayer, car: pendingPlayer.car });
     setPendingPlayer(null);
     setShowConflictModal(false);
     navigate("/Game");

@@ -2,9 +2,15 @@ import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet';
 import { calculatePositionOfArrow, calculateDistance } from '../utils/algorithms.js';
 import Arrow from './Arrow.jsx';
-import carURL from '../assets/redCar.png'
+import { usePlayer } from '../context/PlayerContext';
 import 'leaflet/dist/leaflet.css';
 import '../styles/Map.css';
+
+import car1 from "../assets/RedCar.png";
+import car2 from "../assets/police.png";
+import car3 from "../assets/lightning.png";
+import car4 from "../assets/f1.png";
+import car5 from "../assets/taxi.png";
 
 export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached, onMove, showArrows }) {
 
@@ -14,6 +20,7 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
     const [arrowsVisible, setArrowsVisible] = useState(true);
     const [carRotation, setCarRotation] = useState(0);
     const [distanceToNextNode, setDistanceToNextNode] = useState(0);
+    const { player } = usePlayer();
 
     // Center the car in the startnode when the map first loads
     useEffect(() => {
@@ -104,9 +111,13 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
                 )}
             </MapContainer>
 
-            <img src={carURL} className="carSprite" style={{
+            <img
+                src={player?.car?.imageUrl}
+                className="carSprite"
+                style={{
                 transform: `translate(-50%, -50%) rotate(${carRotation}deg)`
-            }} />
+                }}
+            />
 
             {arrowsVisible && neighbours.map((neighbour) => {
                 let { rot_angle, x_p, y_p } = calculatePositionOfArrow(
