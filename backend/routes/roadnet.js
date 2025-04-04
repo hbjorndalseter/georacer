@@ -5,20 +5,56 @@ const router = express.Router();
 
 // Get all nodes in a given city map
 router.get('/:cityMapId/nodes', async (req, res) => {
+    console.log("Hentet ut nodene")
     try {
         const nodes = await prisma.node.findMany({
             where: {
                 cityMapId: parseInt(req.params.cityMapId)
             }
         });
-        console.log("Nodes:", nodes)
         res.json(nodes);
     } catch (error) {
         console.error("Feil ved henting av noder:", error);
-        res.status(500).json({ error: 'Noe forferdelig gikk galt' });
+        res.status(500).json({ error: 'Noe forferdelig gikk galt 1' });
     }
 }
 );
+
+// Get a map of all the edges in the graph
+router.get('/:cityMapId/edges', async (req, res) => {
+    const cityMapId = parseInt(req.params.cityMapId);
+    if (isNaN(cityMapId)) {
+      return res.status(400).json({ error: "Invalid cityMapId" });
+    }
+  
+    try {
+      const edges = await prisma.edge.findMany({
+        where: { cityMapId },
+        include: { node1: true, node2: true }
+      });
+  
+      const edgeMap = {};
+  
+      edges.forEach(({ node1Id, node2Id, node1, node2 }) => {
+        if (!node1 || !node2) return;
+  
+        [ [node1Id, node2], [node2Id, node1] ].forEach(([fromId, toNode]) => {
+          edgeMap[fromId] ??= [];
+          edgeMap[fromId].push({
+            id: toNode.id,
+            lat: toNode.lat,
+            lng: toNode.lng
+          });
+        });
+      });
+  
+      res.json(edgeMap);
+    } catch (error) {
+      console.error("Error in /edges:", error);
+      res.status(500).json({ error: "Internal server error", message: error.message });
+    }
+  });
+  
 
 // Get the start node of a given city map
 router.get('/:cityMapId/startnode', async (req, res) => {
@@ -33,7 +69,7 @@ router.get('/:cityMapId/startnode', async (req, res) => {
         res.json(startNode);
     } catch (error) {
         console.error("Feil ved henting av startnode:", error);
-        res.status(500).json({ error: 'Noe forferdelig gikk galt' });
+        res.status(500).json({ error: 'Noe forferdelig gikk galt 2' });
     }
 });
 
@@ -50,7 +86,7 @@ router.get('/:cityMapId/:nodeId', async (req, res) => {
         res.json(node);
     } catch (error) {
         console.error("Feil ved henting av node:", error);
-        res.status(500).json({ error: 'Noe forferdelig gikk galt' });
+        res.status(500).json({ error: 'Noe forferdelig gikk galt 3' });
     }
 });
 
@@ -90,5 +126,6 @@ router.get('/:cityMapId/:nodeId/neighbours', async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 })
+
 
 export default router;

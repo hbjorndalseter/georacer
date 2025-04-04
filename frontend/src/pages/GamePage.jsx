@@ -7,6 +7,7 @@ import { updateScore } from "../utils/updateScore";
 import LoadingOverlay from "../components/LoadingScreen";
 import GameResultOverlay from "../components/GameResultOverlay";
 import GameHUD from '../components/GameHUD';
+import { dijkstraShortestPath, calculateScoreByDistance } from "../utils/algorithms";
 
 export default function GamePage() {
   const { player, updatePlayerScore } = usePlayer();
@@ -27,21 +28,28 @@ export default function GamePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFinished, setIsFinished] = useState(false);
 
+  const [shortestPathDistance, setShortestPathDistance] = useState()
+
   // Fetch fact questions and map name when the page loads
   useEffect(() => {
+
     fetch(`http://localhost:3000/api/fact-questions/${mapId}`)
       .then((res) => res.json())
       .then((data) => setFactQuestions(data))
       .catch((error) => console.error("Error fetching fact questions:", error));
+
     fetch(`http://localhost:3000/api/city-maps/${mapId}`)
     .then((res) => res.json())
     .then((data) => setMapName(data))
     .catch((error) => console.error("Error fetching map name:", error));
+
   }, [mapId]);
 
-  // When factQuestions are available, load the first question's checkpoint node. 
+  // When factQuestions are available, load the first question's checkpoint node and calculate the totalShortestDistance
   useEffect(() => {
+    
     if (factQuestions.length > 0) {
+      calculateShortestPath();
       const firstQuestion = factQuestions[0];
       fetchNodeToQuestion(mapId, firstQuestion.nodeId);
       setTimeout(() => {
@@ -49,6 +57,25 @@ export default function GamePage() {
       }, 2000);
     }
   }, [factQuestions]);
+
+   const calculateShortestPath = async () => {
+    let sum = 0
+    let nodeId1;
+    console.log(factQuestions.length)
+    for (let i = -1; i < factQuestions.length - 1; i++) {
+      if (i == -1) {
+        nodeId1 = 1 // First node always id = 1
+      }
+      else {
+        nodeId1 = factQuestions[i].nodeId
+      }
+      const nodeId2 = factQuestions[i + 1]?.nodeId
+      const distance = await dijkstraShortestPath(mapId, nodeId1, nodeId2);
+      console.log("Kjøring: ", i)
+      sum += distance
+    }
+    setShortestPathDistance(sum);
+  }
 
   const fetchNodeToQuestion = (mapId, nodeId) => {
     fetch(`http://localhost:3000/api/roadnet/${mapId}/${nodeId}`)
@@ -75,12 +102,10 @@ export default function GamePage() {
   };
 
   // When you answer the question
-  const handleAnswerSubmit = async (userAnswer) => {
-    let isCorrect = false;
+  const handleAnswerSubmit = async (isCorrect) => {
 
     // If correct - update score
-    if (userAnswer.trim().toLowerCase() === currentQuestion.answer.trim().toLowerCase()) {
-      isCorrect = true;
+    if (isCorrect) {
       const newScore = currentScore + currentQuestion.score;
       setCurrentScore(newScore);
       setCorrectAnswers(correctAnswers + 1);
@@ -93,12 +118,18 @@ export default function GamePage() {
     if (nextQuestionIndex < factQuestions.length) {
       const nextQuestion = factQuestions[nextQuestionIndex];
       fetchNodeToQuestion(mapId, nextQuestion.nodeId);
-    } else {
-      const highscoreStatus = await updateScore(player, currentScore);
+    } else { 
+      // Score evaluation
+      const scoreByDistance = calculateScoreByDistance(totalDistanceMoved, shortestPathDistance)
+      console.log(scoreByDistance)
+
+      const highscoreStatus = await updateScore(player, currentScore+scoreByDistance);
+
       setIsHighscore(highscoreStatus);
-      setIsFinished(true);
+      setTimeout(() => {
+        setIsFinished(true);
+      }, 1500); // same as question timeout
     }
-    return isCorrect;
   };
 
   const onMove = (distance) => {

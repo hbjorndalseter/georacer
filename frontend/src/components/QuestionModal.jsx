@@ -7,8 +7,9 @@ export default function QuestionModal({ task, onSubmit, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const isCorrect = await onSubmit(userAnswer);
+    const isCorrect = userAnswer.trim().toLowerCase() === task.answer.trim().toLowerCase()
     setFeedback(isCorrect ? 'correct' : 'wrong');
+    await onSubmit(isCorrect);
     setTimeout(() => {
       setFadeOut(true);
     }, 500); // wait before fading out
