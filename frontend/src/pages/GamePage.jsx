@@ -135,7 +135,7 @@ export default function GamePage() {
     console.log(scoreByDistance);
     const  finalScore = score + scoreByDistance
 
-    const isHigh = await updateScore(player, currentScore + scoreByDistance);
+    const isHigh = await updateScore(player, finalScore);
     setCurrentScore(finalScore)
     setIsHighscore(isHigh);
     setShowGameResults(true)
