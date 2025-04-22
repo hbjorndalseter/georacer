@@ -44,8 +44,8 @@ export default function GameHUD({ playerName, totalDistanceMoved, correctAnswers
 
   return (
     <div
-      className="absolute top-6 left-6 z-[1000] bg-white/10 text-white px-6 py-5 rounded-2xl shadow-2xl backdrop-blur-md 
-                 w-[260px] max-w-xs ring-1 ring-white/10 border border-white/10"
+      className="absolute top-6 left-6 z-[1000] bg-black/40 text-white px-6 py-5 rounded-2xl shadow-2xl backdrop-blur-md 
+                 w-[260px] max-w-xs ring-1 ring-black/10 border border-white/10"
     >
       {/* Header with map name */}
       <div className="flex items-center justify-between mb-4">

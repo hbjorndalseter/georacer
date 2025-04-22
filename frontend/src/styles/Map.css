@@ -21,7 +21,6 @@
   border-radius: 50%;
   text-align: center;
   line-height: 30px;
-  box-shadow: 0 0 4px rgba(234, 179, 8, 0.4); /* soft yellow */
   animation: pulse-glow 1.5s ease-in-out infinite;
   width: 30px;
   height: 30px;
@@ -32,15 +31,12 @@
 
 @keyframes pulse-glow {
   0% {
-    box-shadow: 0 0 8px rgba(234, 179, 8, 0.4);
     transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 16px rgba(234, 179, 8, 1); /* full yellow glow */
     transform: scale(1.1);
   }
   100% {
-    box-shadow: 0 0 8px rgba(234, 179, 8, 0.4);
     transform: scale(1);
   }
 }

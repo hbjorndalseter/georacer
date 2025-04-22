@@ -86,7 +86,7 @@ router.post('/login', async (req, res) => {
 
   try {
     const { player, isNewPlayer } = await getOrCreatePlayer(name, cityMapId);
-    res.json({ player, alreadyExists: !isNewPlayer }); // 👈 send med flagg
+    res.json({ player, alreadyExists: !isNewPlayer }); 
   } catch (error) {
     console.error("Feil ved opprettelse av spiller:", error);
     res.status(500).json({ error: error.message });
@@ -130,7 +130,7 @@ router.post('/update-score', async (req, res) => {
       const players = await prisma.player.findMany({
         where: { cityMapId: idNum },
         orderBy: { score: "desc" },
-        take: 5,
+        take: 10,
       });
   
       res.json(players);

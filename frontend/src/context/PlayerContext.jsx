@@ -4,10 +4,18 @@ import UsernameConflictModal from "../components/UsernameConflictModal.jsx";
 
 const PlayerContext = createContext(null);
 
+// Can access gamepage straight away
+const defaultPlayer = {
+  name: "DevPlayer",
+  cityMapId: 1,
+  car: { imageUrl: "src/assets/redCar.png" },
+  score: 0
+};
+
 export const usePlayer = () => useContext(PlayerContext);
 
 export const PlayerProvider = ({ children }) => {
-  const [player, setPlayer] = useState(null);
+  const [player, setPlayer] = useState(defaultPlayer);
   const [pendingPlayer, setPendingPlayer] = useState(null);
   const [showConflictModal, setShowConflictModal] = useState(false);
   const navigate = useNavigate();
