@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import InteractiveMap from "../components/InteractiveMap";
-import { useNavigate } from "react-router-dom";
 import QuestionModal from "../components/QuestionModal";
+import HintToggle from "../components/HintToggle";
 import { usePlayer } from "../context/PlayerContext";
 import { updateScore } from "../utils/updateScore";
 import LoadingOverlay from "../components/LoadingScreen";
@@ -17,6 +17,7 @@ export default function GamePage() {
   const [factQuestions, setFactQuestions] = useState([]); // All questions in order for the map
   const [currentQuestion, setCurrentQuestion] = useState(null); // The question that was previously shown to the user or being shown in the modal
   const [checkpointNode, setCheckpointNode] = useState(null); // Node at where the next checkpoint is
+  const [hintToNext, setHintToNext] = useState(null);
 
   const [currentScore, setCurrentScore] = useState(0);
   const [totalDistanceMoved, setTotalDistanceMoved] = useState(0);
@@ -25,9 +26,9 @@ export default function GamePage() {
 
   const [showChallenge, setShowChallenge] = useState(false);
   const [showArrows, setShowArrows] = useState(true)
-  const [isFinished, setIsFinished] = useState(false);
   const [showGameResults, setShowGameResults] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [justAnswered, setJustAnswered] = useState(false);
 
   const [shortestPathDistance, setShortestPathDistance] = useState()
 
@@ -47,12 +48,13 @@ export default function GamePage() {
   }, [mapId]);
 
   // When factQuestions are available, load the first question's checkpoint node and calculate the totalShortestDistance
+  // Also find the first hint
   useEffect(() => {
-
     if (factQuestions.length > 0) {
       calculateShortestPath();
       const firstQuestion = factQuestions[0];
       fetchNodeToQuestion(mapId, firstQuestion.nodeId);
+      setHintToNext(firstQuestion.hint)
       setTimeout(() => {
         setIsLoading(false);
       }, 2000);
@@ -62,7 +64,6 @@ export default function GamePage() {
   const calculateShortestPath = async () => {
     let sum = 0
     let nodeId1;
-    console.log(factQuestions.length)
     for (let i = -1; i < factQuestions.length - 1; i++) {
       if (i == -1) {
         nodeId1 = 1 // First node always id = 1
@@ -72,7 +73,6 @@ export default function GamePage() {
       }
       const nodeId2 = factQuestions[i + 1]?.nodeId
       const distance = await dijkstraShortestPath(mapId, nodeId1, nodeId2);
-      console.log("Kjøring: ", i)
       sum += distance
     }
     setShortestPathDistance(sum);
@@ -123,7 +123,11 @@ export default function GamePage() {
       setShowArrows(true)
       const nextQuestion = factQuestions[nextQuestionIndex];
       fetchNodeToQuestion(mapId, nextQuestion.nodeId);
-    } else { 
+      setHintToNext(nextQuestion.hint)
+      setJustAnswered(true);
+      setTimeout(() => setJustAnswered(false), 100);
+
+    } else {
       // The game is finishing here, after last question is answered
       setShowArrows(false);
       setTimeout(() => finishGame(score), 1500);
@@ -133,7 +137,7 @@ export default function GamePage() {
   const finishGame = async (score) => {
     const scoreByDistance = Math.round(calculateScoreByDistance(totalDistanceMoved, shortestPathDistance));
     console.log(scoreByDistance);
-    const  finalScore = score + scoreByDistance
+    const finalScore = score + scoreByDistance
 
     const isHigh = await updateScore(player, finalScore);
     setCurrentScore(finalScore)
@@ -172,6 +176,9 @@ export default function GamePage() {
             }}
           />
         )}
+
+        <HintToggle hint={hintToNext} autoReveal={justAnswered} />
+
       </div>
 
       {isLoading && <LoadingOverlay loadingText="Initierer kart..." />}
