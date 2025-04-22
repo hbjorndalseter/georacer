@@ -27,7 +27,7 @@ export default function StartPage() {
         </button>
       </div>
       <h1 className="text-white text-6xl font-bold mb-10">
-        VELKOMMEN TIL CITYHUNTER
+        VELKOMMEN TIL GEORACER
       </h1>
       <div className="w-full flex justify-center">
         <div className="max-w-4xl w-full flex flex-col items-center">

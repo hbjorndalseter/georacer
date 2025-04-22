@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import InteractiveMap from "../components/InteractiveMap";
 import QuestionModal from "../components/QuestionModal";
 import HintToggle from "../components/HintToggle";
+import TutorialModal from "../components/TutorialModal";
 import { usePlayer } from "../context/PlayerContext";
 import { updateScore } from "../utils/updateScore";
 import LoadingOverlay from "../components/LoadingScreen";
@@ -30,6 +31,7 @@ export default function GamePage() {
   const [showGameResults, setShowGameResults] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [justAnswered, setJustAnswered] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(true);
 
   const [shortestPathDistance, setShortestPathDistance] = useState()
 
@@ -186,10 +188,21 @@ export default function GamePage() {
             onClose={() => {
               setShowChallenge(false);
             }}
+            questionNumber={factQuestions.indexOf(currentQuestion) + 1}
+            totalQuestions={factQuestions.length}
           />
         )}
 
         <HintToggle hint={hintToNext} autoReveal={justAnswered} />
+
+        {showTutorial && (
+          <TutorialModal
+            onClose={() => {
+              setShowTutorial(false)
+            }}
+            firstHint={hintToNext}
+             />
+        )}
 
       </div>
 

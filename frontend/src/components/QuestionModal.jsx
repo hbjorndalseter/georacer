@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function QuestionModal({ task, onSubmit, onClose,  }) {
+export default function QuestionModal({ task, onSubmit, onClose, questionNumber, totalQuestions  }) {
   const [userAnswer, setUserAnswer] = useState('');
   const [feedback, setFeedback] = useState(null); // 'correct' | 'wrong' | null
   const [fadeOut, setFadeOut] = useState(false);
@@ -34,7 +34,7 @@ export default function QuestionModal({ task, onSubmit, onClose,  }) {
         }
       `}
     >
-      <h2 className="text-xl font-bold mb-2">🧠 Utfordring!</h2>
+      <h2 className="text-xl font-bold mb-2">Spørsmål {questionNumber}/{totalQuestions}</h2>
       <p className="mb-4">{task.question}</p>
       <form onSubmit={handleSubmit} className="flex gap-2">
         <input
