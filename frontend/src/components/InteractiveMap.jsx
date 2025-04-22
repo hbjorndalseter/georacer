@@ -26,7 +26,7 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
 
     // Center the car in the startnode when the map first loads
     useEffect(() => {
-        fetch(`http://localhost:3000/api/roadnet/${mapId}/startnode`)
+        fetch(`${import.meta.env.VITE_API_URL}/api/roadnet/${mapId}/startnode`)
             .then(response => response.json())
             .then(data => {
                 setPosition([data.lat, data.lng]);
@@ -49,7 +49,7 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
 
     // Get the neighbours of the current node
     useEffect(() => {
-        fetch(`http://localhost:3000/api/roadnet/${mapId}/${currentNode}/neighbours`)
+        fetch(`${import.meta.env.VITE_API_URL}/api/roadnet/${mapId}/${currentNode}/neighbours`)
             .then(response => response.json())
             .then(data => {
                 setNeighbours(data);

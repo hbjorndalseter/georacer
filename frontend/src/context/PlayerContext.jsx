@@ -4,7 +4,6 @@ import UsernameConflictModal from "../components/UsernameConflictModal.jsx";
 
 const PlayerContext = createContext(null);
 
-// ✅ Sørg for at denne er tilgjengelig
 export const usePlayer = () => useContext(PlayerContext);
 
 export const PlayerProvider = ({ children }) => {
@@ -25,7 +24,7 @@ export const PlayerProvider = ({ children }) => {
   
       const data = await res.json();
   
-      console.log("Login response:", data); // 👈 Her logger vi alt
+      console.log("Login response:", data);
   
       if (data.alreadyExists) {
         console.log("Brukernavn finnes allerede – viser modal");
