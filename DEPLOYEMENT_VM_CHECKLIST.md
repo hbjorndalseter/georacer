@@ -4,19 +4,22 @@ Dette dokumentet beskriver stegene for å deployere CityHunter-prosjektet (front
 
 **Forutsetninger:**
 
-* Du har SSH-tilgang til VM-en som bruker `<brukernavn>`.
-* Du har `psql`, `pg_dump`, `git`, `node`, `npm`, `rsync` installert lokalt.
-* VM-en har `postgresql`, `postgis`, `curl`, `git`, `npm`, `node` (>=v20, helst via NVM), og `pm2` installert.
-* Målmappe for prosjektkode på VM: `/var/www/GIB2_project`.
-* Mappe for frontend-filer servert av Apache: `/var/www/html`.
-* Database på VM: Navn `cityhunter_db`, Bruker `admin`.
-* Backend-port på VM: `<BACKEND_PORT>` (f.eks. `3001`).
+- Du har SSH-tilgang til VM-en som bruker `<brukernavn>`.
+- Du har `psql`, `pg_dump`, `git`, `node`, `npm`, `rsync` installert lokalt.
+- VM-en har `postgresql`, `postgis`, `curl`, `git`, `npm`, `node` (>=v20, helst via NVM), og `pm2` installert.
+- Målmappe for prosjektkode på VM: `/var/www/GIB2_project`.
+- Mappe for frontend-filer servert av Apache: `/var/www/html`.
+- Database på VM: Navn `cityhunter_db`, Bruker `admin`.
+- Backend-port på VM: `<BACKEND_PORT>` (f.eks. `3001`).
 
 ---
+
+## For å "dumpe" databasen fra Railway til lokalt skriv "pg_dump postgres://postgres:gaeDEba4AbGeeeDg1Dd53daC43bGg6dG@trolley.proxy.rlwy.net:36647/railway > cityhunter_dump.sql"
 
 ## A. Forberedelser (Lokal Maskin & VM)
 
 1.  **(Lokal) Velg Riktig Branch:** Sørg for at du har sjekket ut den Git-branchen du vil deployere (f.eks. `main`).
+
     ```bash
     cd /path/to/your/cityhunter # Naviger til prosjektmappen lokalt
     git checkout main           # Eller den branchen du vil deployere
@@ -24,15 +27,18 @@ Dette dokumentet beskriver stegene for å deployere CityHunter-prosjektet (front
     ```
 
 2.  **(Lokal) Oppdater Frontend API URL:** Rediger koden i `frontend`-delen (f.eks. i en `.env`-fil eller konfigurasjonsfil) slik at API-kallene går mot VM-ens adresse og backend-porten (`<BACKEND_PORT>`).
-    * Eksempel: Bytt ut `http://localhost:<BACKEND_PORT>/api` eller Railway-URLen med `http://tba4250s0X.it.ntnu.no:<BACKEND_PORT>/api`. (Bruk ditt gruppenummer for `X`).
+
+    - Eksempel: Bytt ut `http://localhost:<BACKEND_PORT>/api` eller Railway-URLen med `http://tba4250s0X.it.ntnu.no:<BACKEND_PORT>/api`. (Bruk ditt gruppenummer for `X`).
 
 3.  **(Lokal) Klargjør Backend Database URL:** Sjekk `.env`-filen i `backend`-mappen. Sørg for at `DATABASE_URL` peker mot VM-databasen. Sett inn riktig passord.
+
     ```dotenv
     # I backend/.env
     DATABASE_URL="postgresql://admin:<DITT_DB_PASSORD>@localhost:5432/cityhunter_db"
     ```
 
 4.  **(VM) Sjekk/Installer Node.js v20+:** Koble til VM-en med SSH. Bruk NVM (anbefalt).
+
     ```bash
     ssh <brukernavn>@tba4250s0X.it.ntnu.no
     # Last NVM hvis nødvendig
@@ -42,7 +48,8 @@ Dette dokumentet beskriver stegene for å deployere CityHunter-prosjektet (front
     # Verifiser
     node -v # Skal vise v20.x.x eller nyere
     ```
-    * Hvis NVM/Node ikke er installert, følg instruksjoner for dette.
+
+    - Hvis NVM/Node ikke er installert, følg instruksjoner for dette.
 
 5.  **(VM) Klargjør Målmappe for Prosjektkode:** Opprett prosjektmappen og gi din bruker eierskap.
     ```bash
@@ -53,17 +60,20 @@ Dette dokumentet beskriver stegene for å deployere CityHunter-prosjektet (front
 ## B. Database Migrering (Første gang, eller ved behov)
 
 6.  **(Lokal) Eksporter Database (hvis nødvendig):** Ta en fersk dump fra Railway hvis dataene der har endret seg.
+
     ```bash
     # Erstatt med dine Railway-detaljer
     pg_dump "postgresql://USER:PASS@HOST:PORT/DBNAME" > cityhunter_dump.sql
     ```
 
 7.  **(Lokal) Kopier Dump til VM:**
+
     ```bash
     scp cityhunter_dump.sql <brukernavn>@tba4250s0X.it.ntnu.no:/var/tmp/
     ```
 
 8.  **(VM) Installer DB & Opprett DB/Bruker (hvis ikke gjort):**
+
     ```bash
     # sudo apt update && sudo apt install postgresql postgis -y
     # sudo -u postgres psql -c "CREATE DATABASE cityhunter_db;"
@@ -72,16 +82,19 @@ Dette dokumentet beskriver stegene for å deployere CityHunter-prosjektet (front
     ```
 
 9.  **(VM) Aktiver PostGIS Extension:**
+
     ```bash
     sudo -u postgres psql -d cityhunter_db -c "CREATE EXTENSION IF NOT EXISTS postgis;"
     ```
 
 10. **(VM) Gi Nødvendige Rettigheter til `admin`:**
+
     ```bash
     sudo -u postgres psql -d cityhunter_db -c "GRANT USAGE, CREATE ON SCHEMA public TO admin;"
     ```
 
 11. **(VM) Importer Data:**
+
     ```bash
     psql -U admin -d cityhunter_db -h localhost -f /var/tmp/cityhunter_dump.sql
     # Skriv inn DB-passordet. Ignorer ufarlige feil ('transaction_timeout', 'must be owner', 'already exists').
@@ -95,17 +108,20 @@ Dette dokumentet beskriver stegene for å deployere CityHunter-prosjektet (front
 ## C. Backend Deployment
 
 13. **(Lokal) Kopier Prosjektfiler til VM:**
+
     ```bash
     rsync -avz --exclude 'node_modules' --exclude '.git' /path/to/your/cityhunter/ <brukernavn>@tba4250s0X.it.ntnu.no:/var/www/GIB2_project/
     ```
 
 14. **(VM) Installer Avhengigheter:** Kjør fra prosjektets rotmappe på VM.
+
     ```bash
     cd /var/www/GIB2_project
     npm install
     ```
 
 15. **(VM) Kjør Prisma Generate:** Naviger inn i backend-mappen.
+
     ```bash
     cd backend
     npx prisma generate
@@ -131,12 +147,14 @@ Dette dokumentet beskriver stegene for å deployere CityHunter-prosjektet (front
 ## D. Frontend Deployment
 
 17. **(Lokal) Bygg Frontend:** Kjør fra frontend-mappen lokalt.
+
     ```bash
     cd /path/to/your/cityhunter/frontend
     npm run build
     ```
 
 18. **(Lokal) Kopier Bygg-filer til Midlertidig Mappe på VM:**
+
     ```bash
     scp -r /path/to/your/cityhunter/frontend/dist/* <brukernavn>@tba4250s0X.it.ntnu.no:/var/tmp/frontend_build/
     ```
