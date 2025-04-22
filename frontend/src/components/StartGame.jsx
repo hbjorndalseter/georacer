@@ -64,11 +64,11 @@ const StartGame = () => {
 
       {/* Velg bil knapp */}
       <button
-        onClick={() => setShowModal(true)}
-        className="mb-6 px-6 py-2 bg-white text-black rounded-md font-medium hover:bg-gray-200 transition"
-      >
-        Velg bil
-      </button>
+          onClick={() => setShowModal(true)}
+          className="mb-6 px-6 py-2 bg-white text-black rounded-md font-medium hover:bg-gray-200 transition"
+        >
+          {selectedCar ? selectedCar.name : "Velg bil"}
+        </button>
 
       {/* Brukernavn + start */}
       <div className="flex flex-col items-center w-72">
@@ -91,6 +91,7 @@ const StartGame = () => {
           Start spillet
         </button>
       </div>
+      
 
       {showModal && (
         <ChooseCarModal

@@ -29,11 +29,6 @@ export default function StartPage() {
       <h1 className="text-white text-6xl font-bold mb-10">
         VELKOMMEN TIL CITYHUNTER
       </h1>
-      
-      {/* 
-        The StartGame component is wrapped in a container for layout.
-        You can style it as you wish. 
-      */}
       <div className="w-full flex justify-center">
         <div className="max-w-4xl w-full flex flex-col items-center">
           <StartGame />
