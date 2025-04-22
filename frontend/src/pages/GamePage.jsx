@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import InteractiveMap from "../components/InteractiveMap";
 import QuestionModal from "../components/QuestionModal";
 import HintToggle from "../components/HintToggle";
@@ -31,6 +32,15 @@ export default function GamePage() {
   const [justAnswered, setJustAnswered] = useState(false);
 
   const [shortestPathDistance, setShortestPathDistance] = useState()
+
+  const navigate = useNavigate();
+
+  // Validate data required to play
+  useEffect(() => {
+    if (!player || !player.cityMapId) {
+      navigate("/", { replace: true });
+    }
+  }, []);
 
   // Fetch fact questions and map name when the page loads
   useEffect(() => {
@@ -123,6 +133,8 @@ export default function GamePage() {
       setShowArrows(true)
       const nextQuestion = factQuestions[nextQuestionIndex];
       fetchNodeToQuestion(mapId, nextQuestion.nodeId);
+
+      // Show next hint for a few seconds
       setHintToNext(nextQuestion.hint)
       setJustAnswered(true);
       setTimeout(() => setJustAnswered(false), 100);

@@ -30,7 +30,7 @@ export default function HintToggle({ hint, autoReveal }) {
           `}
         >
           <p className="text-white/90 font-medium tracking-wide whitespace-pre-wrap">
-            {hint}
+            <b>Hint:</b> {hint}
           </p>
         </div>
 

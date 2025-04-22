@@ -45,15 +45,12 @@ export default function GameResultOverlay({ currentPlayer, distance, correctAnsw
             </p>
           </>
         )}
-        <div className="flex justify-between">
+        <div className="flex justify-evenly">
           <button onClick={() => { navigate("/"); }} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
             Hjem
           </button>
-          <button onClick={() => { navigate("/Game"); }} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-            Prøv igjen
-          </button>
           <button onClick={() => { navigate("/Result"); }} className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
-            Se highscoreliste
+            Highscoreliste
           </button>
         </div>
       </div>
