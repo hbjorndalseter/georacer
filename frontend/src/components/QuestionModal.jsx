@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function QuestionModal({ task, onSubmit, onClose }) {
+export default function QuestionModal({ task, onSubmit, onClose,  }) {
   const [userAnswer, setUserAnswer] = useState('');
   const [feedback, setFeedback] = useState(null); // 'correct' | 'wrong' | null
   const [fadeOut, setFadeOut] = useState(false);
