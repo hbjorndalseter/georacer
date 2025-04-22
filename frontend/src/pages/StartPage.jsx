@@ -16,7 +16,7 @@ export default function StartPage() {
   }, []);
 
   return (
-    <div className="w-screen h-screen bg-[#1b325e] flex flex-col items-center justify-center">
+    <div className="w-screen h-screen flex flex-col items-center justify-center">
       <div className="absolute top-12 right-6 z-15">
         <button
           onClick={() => navigate("/settings")}
