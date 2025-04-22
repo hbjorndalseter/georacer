@@ -50,7 +50,12 @@ const ChooseCarModal = ({ selectedCar, setSelectedCar, onClose }) => {
         </select>
 
         <button
-          onClick={onClose}
+          onClick={() => {
+            if (!selectedCar) {
+              setSelectedCar(carOptions[0]); // Sett default bil hvis ingen bil er valgt
+            }
+            onClose(); // Lukk modalen uansett
+          }}
           className="mt-2 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md w-full transition font-semibold"
         >
           OK
