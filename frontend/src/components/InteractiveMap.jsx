@@ -16,7 +16,7 @@ const glowingQuestionIcon = L.divIcon({
 
 export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReached, onMove, showArrows }) {
 
-    const [position, setPosition] = useState([63.4305, 10.3951]); // Temporary start, add loading spinner
+    const [position, setPosition] = useState(null); // Initial position is null
     const [currentNode, setCurrentNode] = useState(1); // Start node is always 1
     const [neighbours, setNeighbours] = useState([]);
     const [arrowsVisible, setArrowsVisible] = useState(true);
@@ -103,28 +103,30 @@ export default function InteractiveMap({ mapId, checkpointNode, onCheckpointReac
 
     return (
         <div id='container'>
-            <MapContainer
-                center={position}
-                zoom={18}
-                minZoom={18}
-                style={{ height: '100%', width: '100%' }}
-                dragging={false}
-                zoomControl={false}
-                doubleClickZoom={false}
-            >
-                {/* <TileLayer
+            {position && (
+                <MapContainer
+                    center={position}
+                    zoom={18}
+                    minZoom={18}
+                    style={{ height: '100%', width: '100%' }}
+                    dragging={false}
+                    zoomControl={false}
+                    doubleClickZoom={false}
+                >
+                    {/* <TileLayer
                     url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                     attribution="&copy; OpenStreetMap & CartoDB"
                 /> */}
-                <TileLayer
-                    url="https://api.mapbox.com/styles/v1/aamgrim/cm9sh59tt00ko01s52eqof5f8/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYWFtZ3JpbSIsImEiOiJjbTlzY3d3ZXMwMTV1Mm1zZ3p4NTR2cWc1In0.4u2LSXOHO1_GvcVEjrVTTg"
-                    attribution="&copy; Mapbox & OpenStreetMap contributors"
-                />
-                <CenterMap />
-                {checkpointNode && (
-                    <Marker position={[checkpointNode.lat, checkpointNode.lng]} icon={glowingQuestionIcon} />
-                )}
-            </MapContainer>
+                    <TileLayer
+                        url="https://api.mapbox.com/styles/v1/aamgrim/cm9sh59tt00ko01s52eqof5f8/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYWFtZ3JpbSIsImEiOiJjbTlzY3d3ZXMwMTV1Mm1zZ3p4NTR2cWc1In0.4u2LSXOHO1_GvcVEjrVTTg"
+                        attribution="&copy; Mapbox & OpenStreetMap contributors"
+                    />
+                    <CenterMap />
+                    {checkpointNode && (
+                        <Marker position={[checkpointNode.lat, checkpointNode.lng]} icon={glowingQuestionIcon} />
+                    )}
+                </MapContainer>
+            )}
 
             <img
                 src={player?.car?.imageUrl}
