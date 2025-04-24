@@ -1,40 +1,38 @@
 #!/bin/bash
 
-# === KONFIGURASJON ===
+set -e  # Stopp scriptet hvis noe feiler
+
+# === KONFIG ===
 VM_USER="hjalmabj"
 VM_HOST="tba4250s03.it.ntnu.no"
-TMP_DIR="/var/tmp/GIB2_project"
-FRONTEND_DIST_DIR="frontend/dist"
-BACKEND_DIR="backend"
-VM_FRONTEND_DIR="/var/www/html"
-VM_BACKEND_DIR="/var/www/backend"
+VM_DIR="/var/www/GIB2_project"
+APACHE_DIR="/var/www/html"
 BACKEND_ENTRY="index.js"
 
-echo "🚧 Bygger frontend..."
+echo "🚧 Bygger frontend lokalt..."
+cd frontend
+npm install
 npm run build
+cd ..
 
-echo "🚚 Kopierer frontend til VM..."
-scp -r ${FRONTEND_DIST_DIR}/* ${VM_USER}@${VM_HOST}:${TMP_DIR}/
+echo "📦 Installerer deps i rotmappe..."
+npm install
 
-echo "🔄 Synkroniserer backend (uten node_modules)..."
-rsync -av --progress --exclude node_modules ${BACKEND_DIR} ${VM_USER}@${VM_HOST}:${TMP_DIR}/
+echo "🚚 Overfører hele prosjektet til VM..."
+rsync -av --progress --exclude node_modules . ${VM_USER}@${VM_HOST}:${VM_DIR}/
 
-echo "🖥️ Logger inn på VM og flytter filer..."
+echo "🖥️ Logger inn på VM og setter opp prosjektet..."
 ssh ${VM_USER}@${VM_HOST} << EOF
-  echo "🧹 Rydder gammel frontend..."
-  sudo rm -rf ${VM_FRONTEND_DIR}/*
+  set -e
 
-  echo "📦 Flytter frontend til Apache-dir..."
-  sudo mv ${TMP_DIR}/* ${VM_FRONTEND_DIR}/
+  echo "🧹 Rydder gammel frontend fra Apache..."
+  sudo rm -rf ${APACHE_DIR}/*
 
-  echo "🧹 Rydder gammel backend..."
-  sudo rm -rf ${VM_BACKEND_DIR}/*
+  echo "📋 Kopierer ny dist til Apache dir..."
+  sudo cp -r ${VM_DIR}/frontend/dist/* ${APACHE_DIR}/
 
-  echo "📦 Flytter backend til /var/www/backend..."
-  sudo mv ${TMP_DIR}/backend/* ${VM_BACKEND_DIR}/
-
-  echo "📦 Installerer avhengigheter..."
-  cd ${VM_BACKEND_DIR}
+  echo "📦 Installerer backend-deps..."
+  cd ${VM_DIR}/backend
   npm install
 
   echo "🚀 Starter backend med PM2..."
@@ -43,4 +41,4 @@ ssh ${VM_USER}@${VM_HOST} << EOF
   pm2 save
 EOF
 
-echo "✅ Deploy fullført!"
+echo "✅ Alt er deployet og backend kjører i PM2!"
