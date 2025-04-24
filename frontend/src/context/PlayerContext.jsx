@@ -22,7 +22,7 @@ export const PlayerProvider = ({ children }) => {
 
   const loginPlayer = async (username, cityMapId, car) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/players/login`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/players/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: username, cityMapId }),

@@ -1,5 +1,6 @@
 import express from 'express';
 import prisma from '../db.js';
+import { isOffensive } from '../../shared/bannedWords.js';
 
 const router = express.Router();
 
@@ -85,6 +86,9 @@ router.post('/login', async (req, res) => {
   }
 
   try {
+    if (isOffensive(name)) {
+      return res.status(400).json({ error: 'Brukernavnet inneholder upassende språk.' });
+    }
     const { player, isNewPlayer } = await getOrCreatePlayer(name, cityMapId);
     res.json({ player, alreadyExists: !isNewPlayer }); 
   } catch (error) {

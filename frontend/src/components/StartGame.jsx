@@ -2,6 +2,7 @@ import { useState } from "react";
 import { usePlayer } from "../context/PlayerContext";
 import { toast } from "react-toastify";
 import ChooseCarModal from "./ChooseCarModal";
+import { isOffensive } from "../../../shared/bannedWords"
 
 import trondheimBildeURL from "../assets/nidarosdomen.png";
 import osloBildeURL from "../assets/slottet.png";
@@ -23,6 +24,15 @@ const StartGame = () => {
   const handleStartGame = () => {
     if (!username.trim() || !selectedCity || !selectedCar) {
       toast.error("⚠️ Du må velge en by, bil og skrive inn brukernavn!", {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "dark",
+      });
+      
+      return;
+    }
+    if (isOffensive(username)) {
+      toast.error("🚫 Brukernavnet inneholder upassende språk!", {
         position: "top-center",
         autoClose: 3000,
         theme: "dark",

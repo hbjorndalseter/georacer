@@ -21,7 +21,7 @@ export default function SettingsPage() {
   }, [adminVerified]);
 
   const verifyAdmin = async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/verify-admin`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/verify-admin`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password }),
@@ -49,7 +49,7 @@ export default function SettingsPage() {
   const confirmDelete = async () => {
     setShowModal(false);
   
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/players/${selectedCityMapId}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/players/${selectedCityMapId}`, {
       method: 'DELETE',
     });
   

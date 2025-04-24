@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 
     setIsLoading(true);
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/players/top-players-by-map/${mapId}`)
+    fetch(`${import.meta.env.VITE_API_URL}/players/top-players-by-map/${mapId}`)
       .then((res) => res.json())
       .then((data) => {
         setPlayers(data);
@@ -23,7 +23,7 @@ import { useState, useEffect } from "react";
         if (onLoaded) onLoaded();
       });
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/city-maps/${mapId}`)
+    fetch(`${import.meta.env.VITE_API_URL}/city-maps/${mapId}`)
       .then((res) => res.json())
       .then((name) => setMapName(name))
       .catch((error) => console.error("Feil ved henting av kartnavn:", error));

@@ -24,7 +24,7 @@ const ResultPage = () => {
 
   // Hent alle tilgjengelige kart
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/city-maps`)
+    fetch(`${import.meta.env.VITE_API_URL}/city-maps`)
       .then((res) => res.json())
       .then((data) => setCityMaps(data))
       .catch((error) => console.error("Feil ved henting av kart:", error));
