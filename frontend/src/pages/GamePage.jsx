@@ -29,7 +29,7 @@ export default function GamePage() {
   const [showChallenge, setShowChallenge] = useState(false);
   const [showArrows, setShowArrows] = useState(true)
   const [showGameResults, setShowGameResults] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [justAnswered, setJustAnswered] = useState(false);
   const [showTutorial, setShowTutorial] = useState(true);
 

@@ -18,12 +18,15 @@ router.get('/:mapId', async (req, res) => {
     try {
         const fact_questions = await prisma.factQuestion.findMany({
             where: {
-                cityMapId: parseInt(req.params.mapId)
+                cityMapId: parseInt(req.params.mapId),
+            },
+            orderBy: {
+                id: "asc"
             }
         });
         res.json(fact_questions);
     } catch (error) {
-        console.error("Feil ved henting av spillere:", error);
+        console.error("Feil ved henting av spørsmål:", error);
         res.status(500).json({ error: 'Noe gikk galt' });
     }
 });
