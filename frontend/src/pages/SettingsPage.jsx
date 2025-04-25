@@ -13,7 +13,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (adminVerified) {
-      fetch(`${import.meta.env.VITE_API_URL}/api/city-maps`)
+      fetch(`${import.meta.env.VITE_API_URL}/city-maps`)
         .then(res => res.json())
         .then(data => setCityMaps(data))
         .catch(err => setStatus('Kunne ikke hente kart'));

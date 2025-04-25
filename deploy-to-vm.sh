@@ -35,10 +35,11 @@ ssh ${VM_USER}@${VM_HOST} << EOF
   cd ${VM_DIR}/backend
   npm install
 
-  echo "🚀 Starter backend med PM2..."
+  echo "🚀 Starter backend med PM2 i produksjonsmodus..."
+  export NODE_ENV=production
   pm2 delete backend || true
-  pm2 start ${BACKEND_ENTRY} --name backend
+  pm2 start ${BACKEND_ENTRY} --name backend --env production
   pm2 save
 EOF
 
-echo "✅ Alt er deployet og backend kjører i PM2!"
+echo "✅ Alt er deployet og backend kjører i PM2 med NODE_ENV=production!"
