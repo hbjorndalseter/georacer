@@ -2,6 +2,7 @@ import { useState } from "react";
 import { usePlayer } from "../context/PlayerContext";
 import { toast } from "react-toastify";
 import ChooseCarModal from "./ChooseCarModal";
+import { isOffensive } from "../../../shared/bannedWords"
 
 import trondheimBildeURL from "../assets/nidarosdomen.png";
 import osloBildeURL from "../assets/slottet.png";
@@ -17,10 +18,11 @@ const StartGame = () => {
   const [selectedCar, setSelectedCar] = useState(null);
   const [username, setUsername] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const { loginPlayer } = usePlayer();
 
-  const handleStartGame = () => {
+  const handleStartGame = async () => {
     if (!username.trim() || !selectedCity || !selectedCar) {
       toast.error("⚠️ Du må velge en by, bil og skrive inn brukernavn!", {
         position: "top-center",
@@ -29,7 +31,23 @@ const StartGame = () => {
       });
       return;
     }
-    loginPlayer(username, selectedCity.id, selectedCar);  
+  
+    if (isOffensive(username)) {
+      toast.error("🚫 Brukernavnet inneholder upassende språk!", {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "dark",
+      });
+      return;
+    }
+  
+    setIsLoggingIn(true); // 👉 prevent double click
+  
+    try {
+      await loginPlayer(username, selectedCity.id, selectedCar);
+    } finally {
+      setIsLoggingIn(false); // 👉 ensure re-enable even if login fails
+    }
   };
 
   return (
@@ -81,7 +99,7 @@ const StartGame = () => {
         />
         <button
           onClick={handleStartGame}
-          disabled={!username.trim() || !selectedCity || !selectedCar}
+          disabled={!username.trim() || !selectedCity || !selectedCar || isLoggingIn}
           className={`w-full py-3 text-lg rounded-xl font-semibold shadow-md transition duration-300 ${
             !username.trim() || !selectedCity || !selectedCar
               ? "bg-gray-400 text-gray-800 cursor-not-allowed"

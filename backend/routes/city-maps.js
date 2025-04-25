@@ -5,7 +5,12 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
     try {
-        const cityMaps = await prisma.cityMap.findMany();
+        const cityMaps = await prisma.cityMap.findMany({
+          select: {
+            id: true,
+            name: true,
+          },
+        });
         res.json(cityMaps);
     } catch (error) {
         console.error("Feil ved henting av bykart:", error);

@@ -27,6 +27,15 @@ export default function GameInfoModal({ onClose, firstHint }) {
                 <div className="mt-6 text-center font-semibold text-white/90">
                     Lykke til!
                 </div>
+                {/* Start-knapp */}
+                <div className="mt-8 flex justify-center">
+                <button
+                    onClick={onClose}
+                    className="bg-white text-[#1b325e] hover:bg-gray-100  font-semibold px-6 py-2 rounded-lg shadow transition"
+                >
+                    Start spillet
+                </button>
+                </div>
             </div>
         </div>
     );

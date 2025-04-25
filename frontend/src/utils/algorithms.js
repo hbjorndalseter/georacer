@@ -64,11 +64,11 @@ async function dijkstraShortestPath(mapId, startNodeId, endNodeId) {
     const visitedNodes = new Set();
 
     // Fetch all nodes and map by ID for quick access
-    const nodes = await fetch(`${import.meta.env.VITE_API_URL}/api/roadnet/${mapId}/nodes`)
+    const nodes = await fetch(`${import.meta.env.VITE_API_URL}/roadnet/${mapId}/nodes`)
         .then(res => res.json());
 
     // Fetch all edges (neighbour-matrix)
-    const edgeMap = await fetch(`${import.meta.env.VITE_API_URL}/api/roadnet/${mapId}/edges`)
+    const edgeMap = await fetch(`${import.meta.env.VITE_API_URL}/roadnet/${mapId}/edges`)
         .then((res) => res.json());
 
 
