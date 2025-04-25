@@ -175,4 +175,6 @@ Dette dokumentet beskriver stegene for å deployere CityHunter-prosjektet (front
 21. **Sjekk Funksjonalitet:** Verifiser at siden laster, API-kall går til VM-backend (`http://tba4250s0X.it.ntnu.no:<BACKEND_PORT>/api/...`), og data vises/lagres korrekt. Bruk nettleserens utviklerverktøy (Network-fanen).
 22. **Sjekk Logger (VM):** Ved feil, sjekk `pm2 logs cityhunter-backend` og evt. `sudo journalctl -u postgresql`.
 
+
+
 ---

@@ -9,7 +9,9 @@
     "serve": "vite preview",
     "start": "node backend/index.js",
     "dev": "concurrently --kill-others-on-fail \"npm run dev:client\" \"cd backend && npm run start\"",
-    "start:backend": "npx prisma db push && node backend/index.js"
+    "start:backend": "npx prisma db push && node backend/index.js",
+    "start:dev": "NODE_ENV=development node backend/index.js",
+    "start:prod": "NODE_ENV=production node backend/index.js"
   },
   "prisma": {
     "schema": "backend/prisma/schema.prisma"

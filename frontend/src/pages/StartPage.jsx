@@ -9,7 +9,7 @@ export default function StartPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/players`)
+    fetch(`${import.meta.env.VITE_API_URL}/players`)
       .then((response) => response.json())
       .then((data) => setPlayers(data))
       .catch((error) => console.error("Error:", error));

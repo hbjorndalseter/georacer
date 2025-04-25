@@ -47,12 +47,12 @@ export default function GamePage() {
   // Fetch fact questions and map name when the page loads
   useEffect(() => {
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/fact-questions/${mapId}`)
+    fetch(`${import.meta.env.VITE_API_URL}/fact-questions/${mapId}`)
       .then((res) => res.json())
       .then((data) => setFactQuestions(data))
       .catch((error) => console.error("Error fetching fact questions:", error));
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/city-maps/${mapId}`)
+    fetch(`${import.meta.env.VITE_API_URL}/city-maps/${mapId}`)
       .then((res) => res.json())
       .then((data) => setMapName(data))
       .catch((error) => console.error("Error fetching map name:", error));
@@ -91,7 +91,7 @@ export default function GamePage() {
   }
 
   const fetchNodeToQuestion = (mapId, nodeId) => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/roadnet/${mapId}/${nodeId}`)
+    fetch(`${import.meta.env.VITE_API_URL}/roadnet/${mapId}/${nodeId}`)
       .then((res) => res.json())
       .then((data) => setCheckpointNode(data))
       .catch((error) =>

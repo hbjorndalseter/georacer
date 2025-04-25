@@ -6,7 +6,7 @@ export async function updateScore(player, finalScore) {
 
   if (isHighscore) {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/players/update-score`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/players/update-score`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
