@@ -22,5 +22,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-reset-db.sh
-deploy-to-vm.sh
+scripts/*
